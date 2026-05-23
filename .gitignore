@@ -1,0 +1,5 @@
+# intermediate Excel extraction (not part of the deliverable)
+/igi_dump/
+
+# local Claude Code settings (per-user)
+.claude/settings.local.json
