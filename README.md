@@ -1,4 +1,4 @@
-# mon-budget · Calculateur IGI Vaud
+# calculateur-impot-vaud · Calculateur IGI Vaud
 
 Calculateur web de l'**impôt sur le gain immobilier** du Canton de Vaud, porté
 1:1 depuis le classeur Excel `IGI Vaud Calculateur v2.xlsx` (barème art. 72 LI
