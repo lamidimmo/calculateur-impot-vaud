@@ -643,15 +643,16 @@ input[type="range"]:focus::-webkit-slider-thumb {
   margin-bottom: 6px;
 }
 .result-amount {
-  /* readable, modern: sans-serif tabular-nums, tight tracking */
+  /* readable, modern: sans-serif tabular-nums, slightly loose for apostrophes */
   font-family: var(--sans);
   font-weight: 700;
-  font-size: 42px;
-  line-height: 1.05;
-  letter-spacing: -.025em;
+  font-size: 40px;
+  line-height: 1.1;
+  letter-spacing: -.01em;
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum", "lnum";
   color: #fff;
+  word-spacing: -0.04em;
 }
 .result-foot {
   margin-top: 8px;

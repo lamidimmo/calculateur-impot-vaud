@@ -78,11 +78,27 @@ const TAG_LABEL = {
 /* ============================================================
    Helpers
    ============================================================ */
-const fmt = new Intl.NumberFormat("fr-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const fmtPct = new Intl.NumberFormat("fr-CH", { style: "percent", minimumFractionDigits: 0, maximumFractionDigits: 0 });
-function nbsp(s) { return s.replace(/ /g, " "); }
-function formatMoney(n) { return isFinite(n) ? nbsp(fmt.format(n)) : "0,00"; }
-function formatPct(r) { return isFinite(r) ? nbsp(fmtPct.format(r)) : "0 %"; }
+/* Swiss style: apostrophe thousand separator + comma decimal (e.g. 210'000,00) */
+const _fmt2 = new Intl.NumberFormat("fr-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const _fmt0 = new Intl.NumberFormat("fr-CH", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+const _fmtPct = new Intl.NumberFormat("fr-CH", { style: "percent", minimumFractionDigits: 0, maximumFractionDigits: 0 });
+function _withApostrophes(parts) {
+  return parts.map(p => p.type === "group" ? "'" : p.value).join("");
+}
+function nbsp(s) { return s; } // legacy noop
+function formatMoney(n) {
+  if (!isFinite(n)) return "0,00";
+  return _withApostrophes(_fmt2.formatToParts(n));
+}
+function formatInt(n) {
+  if (!isFinite(n)) return "0";
+  return _withApostrophes(_fmt0.formatToParts(n));
+}
+function formatPct(r) {
+  if (!isFinite(r)) return "0 %";
+  // single value, no thousand separator needed — keep Intl output but normalise space to nbsp
+  return _fmtPct.format(r).replace(/\s/g, " ");
+}
 
 function parseNum(v) {
   if (v == null) return 0;
@@ -502,7 +518,7 @@ function attachNumericFormatting() {
     el.addEventListener("blur", () => {
       const n = parseNum(el.value);
       if (n === 0 && el.value.trim() === "") return;
-      el.value = nbsp(new Intl.NumberFormat("fr-CH").format(n));
+      el.value = formatInt(n);
     });
     el.addEventListener("focus", () => {
       const n = parseNum(el.value);
