@@ -7,7 +7,7 @@
 <meta name="description" content="Estimez en temps réel l'impôt sur le gain immobilier (IGI) du Canton de Vaud — barème art. 72 LI, frais déductibles, travaux de plus-value, optimisations." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -18,29 +18,28 @@
       <div class="brand-mark" aria-hidden="true">IGI</div>
       <div class="brand-text">
         <div class="brand-line-1">Impôt sur le gain immobilier</div>
-        <div class="brand-line-2">Canton de Vaud — Calculateur professionnel</div>
+        <div class="brand-line-2">Canton de Vaud</div>
       </div>
     </div>
     <div class="header-meta">
-      <span class="badge">Barème en vigueur au 01.01.2026</span>
+      <span class="badge">Barème au 01.01.2026</span>
+      <span class="badge-check" id="lastVerifiedBadge" title="Vérification automatique mensuelle des sources officielles">
+        <span class="check-dot"></span><span id="lastVerifiedDate">—</span>
+      </span>
     </div>
   </div>
 
-  <nav class="tabs" role="tablist" aria-label="Sections du calculateur">
+  <nav class="tabs" role="tablist" aria-label="Sections">
     <div class="wrap tabs-wrap">
       <button class="tab is-active" role="tab" aria-selected="true" data-tab="calculateur">
-        <span class="tab-num">01</span><span class="tab-label">Calculateur</span>
-      </button>
-      <button class="tab" role="tab" aria-selected="false" data-tab="exemple">
-        <span class="tab-num">02</span><span class="tab-label">Exemple chiffré</span>
+        <span class="tab-label">Calculateur</span>
       </button>
       <button class="tab" role="tab" aria-selected="false" data-tab="bareme">
-        <span class="tab-num">03</span><span class="tab-label">Barème</span>
+        <span class="tab-label">Barème</span>
       </button>
       <button class="tab" role="tab" aria-selected="false" data-tab="guide">
-        <span class="tab-num">04</span><span class="tab-label">Guide travaux</span>
+        <span class="tab-label">Guide travaux</span>
       </button>
-      <div class="tab-indicator" aria-hidden="true"></div>
     </div>
   </nav>
 </header>
@@ -49,23 +48,16 @@
 
   <!-- ====== CALCULATEUR ====== -->
   <section class="panel is-active" id="panel-calculateur" role="tabpanel">
-    <div class="panel-intro">
-      <h1 class="panel-title">Calculateur d'impôt sur le gain immobilier</h1>
-      <p class="panel-sub">Saisissez les cellules <span class="legend-dot legend-input"></span> bleues, les calculs en <span class="legend-dot legend-calc"></span> noir se mettent à jour automatiquement. Les choix d'occupation <span class="legend-dot legend-choice"></span> influencent la durée fiscale pondérée.</p>
-    </div>
 
     <div class="layout">
       <!-- ============ FORM ============ -->
       <div class="form-col">
 
-        <!-- (1) Données de base -->
+        <!-- 1. Données de base -->
         <section class="card">
           <header class="card-head">
-            <div class="card-num">1</div>
-            <div>
-              <h2 class="card-title">Données de base — prix &amp; dates</h2>
-              <p class="card-sub">Montants à l'acte et dates d'achat / cession prévue.</p>
-            </div>
+            <span class="card-step">01</span>
+            <h2 class="card-title">Prix &amp; dates</h2>
           </header>
           <div class="grid grid-2">
             <label class="field">
@@ -73,7 +65,7 @@
               <div class="input-wrap"><input type="text" inputmode="numeric" data-input="prixVente" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div>
             </label>
             <label class="field">
-              <span class="field-label">Prix d'achat effectif <em>(montant à l'acte)</em></span>
+              <span class="field-label">Prix d'achat</span>
               <div class="input-wrap"><input type="text" inputmode="numeric" data-input="prixAchat" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div>
             </label>
             <label class="field">
@@ -81,168 +73,169 @@
               <input type="date" data-input="dateAchat" />
             </label>
             <label class="field">
-              <span class="field-label">Date de vente / cession prévue</span>
+              <span class="field-label">Date de vente</span>
               <input type="date" data-input="dateVente" />
             </label>
           </div>
-          <div class="readout">
-            <span class="readout-label">⟹ Durée de possession réelle</span>
-            <span class="readout-value" data-out="dureeReelle">— saisir les dates —</span>
+          <div class="pill">
+            <span class="pill-label">Durée de possession</span>
+            <span class="pill-value" data-out="dureeReelle">— saisir les dates —</span>
           </div>
         </section>
 
-        <!-- (2) Frais d'acquisition -->
+        <!-- 2. Frais d'acquisition -->
         <section class="card">
           <header class="card-head">
-            <div class="card-num">2</div>
-            <div>
-              <h2 class="card-title">Frais d'acquisition</h2>
-              <p class="card-sub">À l'achat — déductibles du gain.</p>
-            </div>
+            <span class="card-step">02</span>
+            <h2 class="card-title">Frais d'acquisition</h2>
+            <span class="card-hint">déductibles du gain</span>
           </header>
           <div class="grid grid-3">
             <div class="field auto">
-              <span class="field-label">Droits de mutation <em>3,3 % du prix d'achat</em></span>
-              <div class="readout inline"><span class="readout-value" data-out="droitsMutation">0,00</span><span class="readout-suffix">CHF</span></div>
-              <span class="field-hint">Art. 10-11 LMSD Vaud — automatique</span>
+              <span class="field-label">Droits de mutation <em>3,3 %</em></span>
+              <div class="readout-inline"><span data-out="droitsMutation">0,00</span><span class="suffix">CHF</span></div>
             </div>
             <div class="field auto">
-              <span class="field-label">Frais notaire + Registre foncier <em>0,7 %</em></span>
-              <div class="readout inline"><span class="readout-value" data-out="fraisNotaire">0,00</span><span class="readout-suffix">CHF</span></div>
-              <span class="field-hint">Écraser si facture connue</span>
+              <span class="field-label">Notaire + RF <em>0,7 %</em></span>
+              <div class="readout-inline"><span data-out="fraisNotaire">0,00</span><span class="suffix">CHF</span></div>
             </div>
             <label class="field">
-              <span class="field-label">Cédule hypothécaire à l'achat</span>
+              <span class="field-label">Cédule hypothécaire</span>
               <div class="input-wrap"><input type="text" inputmode="numeric" data-input="cedule" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div>
-              <span class="field-hint">Saisir 0 si inconnu</span>
             </label>
           </div>
           <div class="card-total">
-            <span>TOTAL frais d'acquisition</span>
-            <strong><span data-out="totalAcq">0,00</span> CHF <em data-out="totalAcqPct">(0,00 % du prix d'achat)</em></strong>
+            <span>Total</span>
+            <strong><span data-out="totalAcq">0,00</span> CHF</strong>
           </div>
         </section>
 
-        <!-- (3) Travaux -->
+        <!-- 3. Travaux -->
         <section class="card">
           <header class="card-head">
-            <div class="card-num">3</div>
-            <div>
-              <h2 class="card-title">Travaux de plus-value</h2>
-              <p class="card-sub">Art. 70 LI — impenses déductibles uniquement.</p>
-            </div>
+            <span class="card-step">03</span>
+            <h2 class="card-title">Travaux de plus-value</h2>
+            <span class="card-hint">art. 70 LI</span>
           </header>
-          <div class="callout">
-            <strong>⚠ Saisir uniquement</strong> les travaux créant une plus-value durable : piscine, extension, aménagement combles, véranda, garage ajouté, sauna, cuisine/SdB haut-de-gamme sur bien standard, panneaux solaires.<br />
-            L'entretien courant (peinture, remplacement à l'identique, toiture équivalente) <strong>n'est pas déductible ici</strong> — voir l'onglet <em>Guide travaux</em>.
-          </div>
+          <p class="card-help">Uniquement les travaux créant une plus-value durable (piscine, extension, combles, véranda, garage, cuisine/SdB haut-de-gamme, panneaux solaires). L'entretien n'est <strong>pas</strong> déductible ici — <a href="#" data-goto="guide">voir le guide</a>.</p>
           <div class="grid grid-2">
-            <label class="field"><span class="field-label">Travaux 1 <em>(piscine / jacuzzi / sauna)</em></span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="t1" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
-            <label class="field"><span class="field-label">Travaux 2 <em>(extension / agrandissement)</em></span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="t2" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
-            <label class="field"><span class="field-label">Travaux 3 <em>(aménagement combles)</em></span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="t3" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
-            <label class="field"><span class="field-label">Travaux 4 <em>(véranda / garage ajouté)</em></span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="t4" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
-            <label class="field"><span class="field-label">Travaux 5 <em>(cuisine HDG / panneaux solaires)</em></span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="t5" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
+            <label class="field"><span class="field-label">Poste 1</span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="t1" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
+            <label class="field"><span class="field-label">Poste 2</span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="t2" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
+            <label class="field"><span class="field-label">Poste 3</span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="t3" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
+            <label class="field"><span class="field-label">Poste 4</span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="t4" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
+            <label class="field"><span class="field-label">Poste 5</span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="t5" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
           </div>
           <div class="card-total">
-            <span>TOTAL travaux de plus-value</span>
+            <span>Total</span>
             <strong><span data-out="totalTravaux">0,00</span> CHF</strong>
           </div>
         </section>
 
-        <!-- (4) Frais de vente -->
+        <!-- 4. Frais de vente -->
         <section class="card">
           <header class="card-head">
-            <div class="card-num">4</div>
-            <div>
-              <h2 class="card-title">Frais de vente</h2>
-              <p class="card-sub">Déductibles du gain.</p>
-            </div>
+            <span class="card-step">04</span>
+            <h2 class="card-title">Frais de vente</h2>
           </header>
           <div class="grid grid-3">
             <label class="field"><span class="field-label">Commission de courtage</span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="courtage" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
-            <label class="field"><span class="field-label">Pénalités bancaires <em>(résiliation hypoth.)</em></span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="penalites" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
-            <label class="field"><span class="field-label">Autres frais <em>(annonces, CECB, diagnostics)</em></span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="autresVente" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
+            <label class="field"><span class="field-label">Pénalités bancaires</span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="penalites" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
+            <label class="field"><span class="field-label">Autres frais</span><div class="input-wrap"><input type="text" inputmode="numeric" data-input="autresVente" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div></label>
           </div>
           <div class="card-total">
-            <span>TOTAL frais de vente</span>
+            <span>Total</span>
             <strong><span data-out="totalVente">0,00</span> CHF</strong>
           </div>
         </section>
 
-        <!-- (5) Occupation -->
+        <!-- 5. Occupation -->
         <section class="card">
           <header class="card-head">
-            <div class="card-num">5</div>
-            <div>
-              <h2 class="card-title">Type d'occupation</h2>
-              <p class="card-sub">Les années de résidence <strong>principale</strong> prouvée comptent double dans la durée fiscale (art. 72 al. 4 LI).</p>
-            </div>
+            <span class="card-step">05</span>
+            <h2 class="card-title">Occupation du bien</h2>
+            <span class="card-hint">les années en principale comptent ×2</span>
           </header>
 
-          <div class="seg" role="radiogroup" aria-label="Type d'occupation">
-            <button type="button" class="seg-btn is-active" data-occ="1">
-              <span class="seg-title">Résidence principale</span>
-              <span class="seg-sub">Domicile officiel</span>
+          <div class="occ-choice" role="radiogroup" aria-label="Type d'occupation">
+            <button type="button" class="occ-btn is-active" data-occ="1">
+              <span class="occ-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>
+              </span>
+              <span class="occ-name">Principale</span>
+              <span class="occ-meta">Bonus ×2</span>
             </button>
-            <button type="button" class="seg-btn" data-occ="2">
-              <span class="seg-title">Résidence secondaire</span>
-              <span class="seg-sub">Occupation personnelle</span>
+            <button type="button" class="occ-btn" data-occ="2">
+              <span class="occ-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 4h-2v4h-2V6H9z"/><path d="M5 21V11l7-5 7 5v10"/><path d="M10 21v-5h4v5"/></svg>
+              </span>
+              <span class="occ-name">Secondaire</span>
+              <span class="occ-meta">Sans bonus</span>
             </button>
-            <button type="button" class="seg-btn" data-occ="3">
-              <span class="seg-title">Mixte</span>
-              <span class="seg-sub">Principale + secondaire</span>
+            <button type="button" class="occ-btn" data-occ="3">
+              <span class="occ-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M16 7l5 5-5 5"/><path d="M8 17l-5-5 5-5"/></svg>
+              </span>
+              <span class="occ-name">Mixte</span>
+              <span class="occ-meta">À répartir</span>
             </button>
           </div>
 
-          <div class="grid grid-2">
-            <label class="field">
-              <span class="field-label">Années de résidence <strong>principale</strong> prouvée <em>(×2)</em></span>
-              <input type="number" min="0" step="1" data-input="ansPrincipale" placeholder="0" />
-              <span class="field-hint">Attestations de domicile, factures, etc.</span>
-            </label>
-            <label class="field">
-              <span class="field-label">Années de résidence <strong>secondaire</strong> personnelle <em>(×1)</em></span>
-              <input type="number" min="0" step="1" data-input="ansSecondaire" placeholder="0" />
-              <span class="field-hint">Non louée à des tiers</span>
-            </label>
+          <!-- Détail dynamique selon le mode -->
+          <div class="occ-detail" data-occ-state="1">
+            <p class="occ-explain">L'intégralité de la durée de possession compte comme résidence principale — chaque année est doublée dans le calcul fiscal.</p>
           </div>
 
-          <div class="readout-row">
-            <div class="readout"><span class="readout-label">Statut reconnu</span><span class="readout-value" data-out="statut">Résidence PRINCIPALE</span></div>
-            <div class="readout"><span class="readout-label">Contrôle cohérence</span><span class="readout-value" data-out="coherence">— saisir les dates —</span></div>
-            <div class="readout highlight"><span class="readout-label">⟹ Durée fiscale pondérée</span><span class="readout-value" data-out="dureePonderee">— saisir les dates —</span></div>
+          <div class="occ-detail" data-occ-state="2" hidden>
+            <p class="occ-explain">Aucun bonus de résidence principale appliqué. La durée fiscale égale la durée réelle.</p>
+          </div>
+
+          <div class="occ-detail" data-occ-state="3" hidden>
+            <div class="slider-block" id="mixSlider">
+              <div class="slider-prompt">
+                Sur vos <strong data-out="totalYearsLabel">— ans</strong>, combien en résidence principale ?
+              </div>
+              <div class="slider-track-wrap">
+                <input type="range" min="0" max="99" value="0" step="1" data-input="ansPrincipaleSlider" id="ansSlider" />
+              </div>
+              <div class="slider-readout">
+                <div class="slider-leg principale"><span class="leg-num" data-out="legPrincipale">0</span><span class="leg-lbl">en principale (×2)</span></div>
+                <div class="slider-leg secondaire"><span class="leg-num" data-out="legSecondaire">0</span><span class="leg-lbl">en secondaire</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pill highlight">
+            <span class="pill-label">Durée fiscale pondérée</span>
+            <span class="pill-value" data-out="dureePonderee">— saisir les dates —</span>
           </div>
         </section>
 
-        <!-- (6) Estimation fiscale -->
-        <section class="card">
-          <header class="card-head">
-            <div class="card-num">6</div>
-            <div>
-              <h2 class="card-title">Option — estimation fiscale officielle</h2>
-              <p class="card-sub">Art. 67 al. 2 LI. Facultatif : si applicable, peut remplacer le prix d'acquisition.</p>
-            </div>
-          </header>
-          <div class="callout subtle">
-            Uniquement si l'estimation fiscale officielle (valeur cadastrale) a été notifiée <strong>après</strong> votre achat et est en vigueur depuis <strong>≥ 10 ans</strong> à la date de vente. Si applicable <em>et</em> supérieure au prix d'achat, elle s'y substitue.
-          </div>
+        <!-- 6. Option estimation fiscale (repliable) -->
+        <details class="card collapsible">
+          <summary class="card-head">
+            <span class="card-step">06</span>
+            <h2 class="card-title">Option : estimation fiscale officielle</h2>
+            <span class="card-hint">facultatif · art. 67 al. 2 LI</span>
+            <span class="chev" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </span>
+          </summary>
+          <p class="card-help">Si l'estimation fiscale officielle a été notifiée <strong>après</strong> votre achat et est en vigueur depuis <strong>≥ 10 ans</strong>, et qu'elle dépasse votre prix d'achat, elle s'y substitue.</p>
           <div class="grid grid-2">
             <label class="field">
-              <span class="field-label">Valeur de l'estimation fiscale officielle</span>
+              <span class="field-label">Valeur de l'estimation</span>
               <div class="input-wrap"><input type="text" inputmode="numeric" data-input="estimFiscale" placeholder="0" class="num" /><span class="input-suffix">CHF</span></div>
-              <span class="field-hint">Saisir 0 si non applicable</span>
             </label>
             <label class="field">
-              <span class="field-label">Date de notification de l'estimation</span>
+              <span class="field-label">Date de notification</span>
               <input type="date" data-input="dateEstim" />
-              <span class="field-hint">Laisser vide si non applicable</span>
             </label>
           </div>
-          <div class="readout-row">
-            <div class="readout"><span class="readout-label">Éligibilité de l'option</span><span class="readout-value" data-out="eligEstim">Non applicable (valeur = 0)</span></div>
-            <div class="readout highlight"><span class="readout-label">⟹ Prix d'acquisition retenu</span><span class="readout-value"><span data-out="prixRetenu">0,00</span> CHF</span></div>
+          <div class="pill-row">
+            <div class="pill"><span class="pill-label">Éligibilité</span><span class="pill-value" data-out="eligEstim">Non applicable</span></div>
+            <div class="pill highlight"><span class="pill-label">Prix d'acquisition retenu</span><span class="pill-value"><span data-out="prixRetenu">0,00</span> CHF</span></div>
           </div>
-        </section>
+        </details>
 
       </div><!-- /.form-col -->
 
@@ -250,149 +243,44 @@
       <aside class="result-col">
         <div class="result-sticky">
 
-          <div class="result-card hero">
+          <div class="result-hero">
             <div class="result-eyebrow">IGI estimé</div>
             <div class="result-amount"><span data-out="igi">—</span></div>
             <div class="result-foot" data-out="igiSub">Saisissez les données pour estimer l'impôt</div>
           </div>
 
           <div class="result-card">
-            <h3 class="result-title">⑦ Calcul du gain</h3>
+            <h3 class="result-title">Décomposition</h3>
             <table class="kv">
               <tbody>
                 <tr><td>Prix de vente</td><td class="num"><span data-out="kvVente">0,00</span> CHF</td></tr>
-                <tr><td>(−) Prix d'acquisition retenu</td><td class="num"><span data-out="kvAcq">0,00</span> CHF</td></tr>
-                <tr><td>(−) Frais d'acquisition</td><td class="num"><span data-out="kvFraisAcq">0,00</span> CHF</td></tr>
-                <tr><td>(−) Travaux de plus-value</td><td class="num"><span data-out="kvTravaux">0,00</span> CHF</td></tr>
-                <tr><td>(−) Frais de vente</td><td class="num"><span data-out="kvFraisVente">0,00</span> CHF</td></tr>
-                <tr class="sep"><td><strong>Gain brut</strong></td><td class="num"><strong><span data-out="kvBrut">0,00</span> CHF</strong></td></tr>
-                <tr><td>Franchise légale</td><td class="num">−5 000,00 CHF</td></tr>
-                <tr class="sep"><td><strong>Gain imposable net</strong></td><td class="num"><strong><span data-out="kvNet">0,00</span> CHF</strong></td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="result-card">
-            <h3 class="result-title">⑧ Taux &amp; impôt</h3>
-            <table class="kv">
-              <tbody>
+                <tr><td>− Prix d'acquisition</td><td class="num"><span data-out="kvAcq">0,00</span> CHF</td></tr>
+                <tr><td>− Frais d'acquisition</td><td class="num"><span data-out="kvFraisAcq">0,00</span> CHF</td></tr>
+                <tr><td>− Travaux plus-value</td><td class="num"><span data-out="kvTravaux">0,00</span> CHF</td></tr>
+                <tr><td>− Frais de vente</td><td class="num"><span data-out="kvFraisVente">0,00</span> CHF</td></tr>
+                <tr class="sep"><td>Gain brut</td><td class="num"><span data-out="kvBrut">0,00</span> CHF</td></tr>
+                <tr><td>− Franchise légale</td><td class="num">5 000,00 CHF</td></tr>
+                <tr class="sep"><td><strong>Gain imposable</strong></td><td class="num"><strong><span data-out="kvNet">0,00</span> CHF</strong></td></tr>
                 <tr><td>Durée fiscale pondérée</td><td class="num"><span data-out="kvDuree">—</span></td></tr>
-                <tr><td>Taux IGI (barème art. 72 LI)</td><td class="num"><span data-out="kvTaux">—</span></td></tr>
-                <tr class="sep"><td><strong>Impôt estimé</strong></td><td class="num"><strong><span data-out="kvIgi">—</span></strong></td></tr>
+                <tr><td>Taux IGI</td><td class="num"><span data-out="kvTaux">—</span></td></tr>
               </tbody>
             </table>
           </div>
 
-          <div class="result-card alerts">
-            <h3 class="result-title">⑨ Alertes &amp; optimisations</h3>
+          <div class="result-card tips-card">
+            <h3 class="result-title">Pistes</h3>
             <ul class="tips">
-              <li><span class="tip-ic">📅</span><div><strong>Vente différée d'1 an</strong><div data-out="tipDiffere">— compléter les données —</div></div></li>
-              <li><span class="tip-ic">🏛️</span><div><strong>Option estimation fiscale</strong><div data-out="tipEstim">Non renseignée — vérifier si applicable</div></div></li>
-              <li><span class="tip-ic">🔄</span><div><strong>Report IGI — remploi</strong><div>Si réinvestissement dans une résidence principale en Suisse dans les ~2 ans → report d'imposition possible (art. 65 LI). Confirmer avec votre notaire.</div></div></li>
+              <li><strong>Vente différée d'1 an</strong><div data-out="tipDiffere">— compléter les données —</div></li>
+              <li><strong>Option estimation fiscale</strong><div data-out="tipEstim">Non renseignée</div></li>
+              <li><strong>Report par remploi</strong><div>Si réinvestissement dans une résidence principale en Suisse sous ~2 ans → report d'imposition possible (art. 65 LI).</div></li>
             </ul>
           </div>
 
-          <div class="disclaimer">
-            ⚠ Outil d'estimation à usage pédagogique — ne constitue pas un avis juridique ou fiscal. Pour tout calcul définitif, consulter un notaire vaudois ou l'<a href="https://www.vd.ch" target="_blank" rel="noopener">ACI (vd.ch)</a>. Règles : LI Vaud, barème art. 72, droits de mutation art. 10-11 LMSD, impenses art. 70 LI — au 01.01.2026.
-          </div>
+          <button class="reset-btn" type="button" id="resetBtn">↺ Réinitialiser</button>
 
-          <button class="reset-btn" type="button" id="resetBtn">↺ Réinitialiser le calculateur</button>
+          <p class="disclaimer">Estimation à usage pédagogique — ne constitue pas un avis fiscal. Pour un calcul définitif, consulter un notaire ou l'<a href="https://www.vd.ch" target="_blank" rel="noopener">ACI</a>.</p>
 
         </div>
-      </aside>
-
-    </div>
-  </section>
-
-  <!-- ====== EXEMPLE CHIFFRÉ ====== -->
-  <section class="panel" id="panel-exemple" role="tabpanel" hidden>
-    <div class="panel-intro">
-      <h1 class="panel-title">Exemple chiffré</h1>
-      <p class="panel-sub">Scénario illustratif d'un bien fictif — pour comprendre l'impact concret de la résidence principale sur l'IGI final.</p>
-    </div>
-
-    <div class="example-grid">
-
-      <section class="card example-summary">
-        <header class="card-head"><div class="card-num">●</div><div><h2 class="card-title">Données de base</h2></div></header>
-        <table class="kv">
-          <tbody>
-            <tr><td>Prix de vente</td><td class="num"><strong>920 000,00 CHF</strong></td></tr>
-            <tr><td>Prix d'achat (achat en 2009)</td><td class="num">590 000,00 CHF</td></tr>
-            <tr><td>Période</td><td class="num">01.06.2009 → 01.06.2024</td></tr>
-            <tr><td>Durée de possession réelle</td><td class="num">15 ans</td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="card">
-        <header class="card-head"><div class="card-num">●</div><div><h2 class="card-title">Frais d'acquisition</h2></div></header>
-        <table class="kv">
-          <tbody>
-            <tr><td>Droits de mutation (590 000 × 3,3 %)</td><td class="num">19 470,00 CHF</td></tr>
-            <tr><td>Frais notaire + RF (590 000 × 0,7 %)</td><td class="num">4 130,00 CHF</td></tr>
-            <tr><td>Cédule hypothécaire</td><td class="num">5 000,00 CHF</td></tr>
-            <tr class="sep"><td><strong>Total</strong></td><td class="num"><strong>28 600,00 CHF</strong></td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="card">
-        <header class="card-head"><div class="card-num">●</div><div><h2 class="card-title">Travaux de plus-value</h2></div></header>
-        <table class="kv">
-          <tbody>
-            <tr><td>Construction piscine</td><td class="num">45 000,00 CHF</td></tr>
-            <tr><td>Aménagement combles (nouvelle chambre)</td><td class="num">32 000,00 CHF</td></tr>
-            <tr class="sep"><td><strong>Total</strong></td><td class="num"><strong>77 000,00 CHF</strong></td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="card">
-        <header class="card-head"><div class="card-num">●</div><div><h2 class="card-title">Frais de vente</h2></div></header>
-        <table class="kv">
-          <tbody>
-            <tr><td>Commission de courtage</td><td class="num">18 400,00 CHF</td></tr>
-            <tr><td>Pénalités bancaires</td><td class="num">6 200,00 CHF</td></tr>
-            <tr class="sep"><td><strong>Total</strong></td><td class="num"><strong>24 600,00 CHF</strong></td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="card span-2">
-        <header class="card-head"><div class="card-num">●</div><div><h2 class="card-title">Occupation &amp; durée fiscale</h2></div></header>
-        <table class="kv">
-          <tbody>
-            <tr><td>Type d'occupation</td><td>Mixte (9 ans principale + 6 ans secondaire)</td></tr>
-            <tr><td>Années de résidence principale prouvées</td><td>9 ans</td></tr>
-            <tr class="sep"><td><strong>Durée fiscale pondérée</strong></td><td><strong>24 ans</strong> &nbsp;<em>(15 réels + 9 bonus principale)</em></td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="card span-2 highlight-card">
-        <header class="card-head"><div class="card-num">∑</div><div><h2 class="card-title">Calcul du gain &amp; impôt</h2></div></header>
-        <table class="kv">
-          <tbody>
-            <tr><td>Prix de vente</td><td class="num">920 000,00 CHF</td></tr>
-            <tr><td>(−) Prix d'achat retenu</td><td class="num">590 000,00 CHF</td></tr>
-            <tr><td>(−) Frais d'acquisition</td><td class="num">28 600,00 CHF</td></tr>
-            <tr><td>(−) Travaux de plus-value</td><td class="num">77 000,00 CHF</td></tr>
-            <tr><td>(−) Frais de vente</td><td class="num">24 600,00 CHF</td></tr>
-            <tr class="sep"><td><strong>Gain brut</strong></td><td class="num"><strong>199 800,00 CHF</strong></td></tr>
-            <tr><td>(−) Franchise légale (art. 62 let. b LI)</td><td class="num">5 000,00 CHF</td></tr>
-            <tr class="sep"><td><strong>Gain imposable net</strong></td><td class="num"><strong>194 800,00 CHF</strong></td></tr>
-            <tr><td>Taux IGI applicable (24 ans → 7 %)</td><td class="num">7 %</td></tr>
-            <tr class="result"><td>💰 IMPÔT ESTIMÉ IGI</td><td class="num"><strong>13 636,00 CHF</strong></td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <aside class="card span-2 lecture">
-        <h3 class="lecture-title">Lecture</h3>
-        <p>Grâce aux <strong>9 ans de résidence principale</strong>, la durée fiscale atteint <strong>24 ans</strong> → taux plancher <strong>7 %</strong> → IGI ≈ <strong>13 636 CHF</strong>.</p>
-        <p>Sans résidence principale (15 ans réels → taux 12 %), l'IGI serait ≈ <strong>23 376 CHF</strong>.</p>
-        <p class="economy">Économie : <strong>≈ 9 740 CHF</strong></p>
       </aside>
 
     </div>
@@ -401,23 +289,25 @@
   <!-- ====== BARÈME ====== -->
   <section class="panel" id="panel-bareme" role="tabpanel" hidden>
     <div class="panel-intro">
-      <h1 class="panel-title">Barème IGI — Canton de Vaud</h1>
-      <p class="panel-sub">Au 01.01.2026 (art. 72 LI). Barème stable depuis 2001. <strong>Les années d'occupation personnelle prouvée comptent double</strong> (art. 72 al. 4 LI).</p>
+      <h1 class="panel-title">Barème IGI</h1>
+      <p class="panel-sub">Au 01.01.2026 — art. 72 LI Vaud. Les années d'occupation personnelle prouvée comptent double (art. 72 al. 4 LI).</p>
     </div>
 
     <div class="bareme-wrap">
       <table class="bareme-table" id="baremeTable">
         <thead>
-          <tr><th>Années détenues</th><th>Tranche</th><th>Taux IGI</th></tr>
+          <tr><th>Années</th><th>Tranche</th><th>Taux</th></tr>
         </thead>
-        <tbody><!-- populated by JS --></tbody>
+        <tbody></tbody>
       </table>
 
-      <div class="bareme-meta">
-        <div class="bareme-source">Source : <strong>art. 72 LI Vaud</strong>. Barème stable depuis 2001.</div>
-        <div class="bareme-chart" aria-hidden="true">
-          <div class="chart-title">Évolution du taux selon la durée</div>
+      <div class="bareme-side">
+        <div class="bareme-chart">
+          <div class="chart-title">Décroissance du taux</div>
           <svg viewBox="0 0 600 220" preserveAspectRatio="none" id="rateChart"></svg>
+        </div>
+        <div class="bareme-source">
+          Source : <a href="https://prestations.vd.ch/pub/blv-publication/actes/consolide/642.11" target="_blank" rel="noopener">art. 72 LI Vaud</a> · barème stable depuis 2001.
         </div>
       </div>
     </div>
@@ -426,40 +316,35 @@
   <!-- ====== GUIDE TRAVAUX ====== -->
   <section class="panel" id="panel-guide" role="tabpanel" hidden>
     <div class="panel-intro">
-      <h1 class="panel-title">Guide — travaux de plus-value vs entretien</h1>
-      <p class="panel-sub">Vaud, art. 70 LI. La frontière entre <em>plus-value</em> (déductible IGI) et <em>entretien</em> (déductible du revenu) est appréciée au cas par cas par l'ACI.</p>
+      <h1 class="panel-title">Travaux : plus-value ou entretien ?</h1>
+      <p class="panel-sub">Art. 70 LI Vaud. La frontière est appréciée au cas par cas par l'ACI — conservez factures et photos avant/après.</p>
     </div>
 
-    <div class="guide-cols">
-      <section class="guide-card guide-yes">
-        <header>
-          <span class="guide-badge yes">OUI déductible IGI</span>
-          <h2>Travaux de plus-value</h2>
-        </header>
-        <ul class="guide-list" id="listYes"><!-- populated --></ul>
-      </section>
-
-      <section class="guide-card guide-no">
-        <header>
-          <span class="guide-badge no">NON déductible IGI</span>
-          <h2>Entretien courant</h2>
-          <p class="guide-note">↳ déductible de l'impôt sur le revenu annuel</p>
-        </header>
-        <ul class="guide-list" id="listNo"><!-- populated --></ul>
-      </section>
+    <div class="guide-toolbar">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="search" id="guideSearch" placeholder="Rechercher (piscine, peinture, toiture…)" />
+      </div>
+      <div class="filter-chips" role="tablist">
+        <button class="chip is-active" data-filter="all">Tout</button>
+        <button class="chip" data-filter="yes">Déductible IGI</button>
+        <button class="chip" data-filter="no">Non déductible</button>
+      </div>
     </div>
 
-    <div class="guide-source">
-      <strong>Source :</strong> art. 70 LI Vaud + pratique ACI. La frontière est appréciée au cas par cas. <strong>Conserver toutes les factures et photos avant/après.</strong> Si l'ACI a refusé une dépense en entretien (revenu), le solde non admis devient une impense déductible à la revente. Consulter votre notaire pour les cas complexes.
-    </div>
+    <div class="guide-list-unified" id="guideList"></div>
+
+    <p class="guide-source">
+      Si l'ACI a refusé une dépense en entretien (revenu), le solde non admis devient une impense déductible à la revente.
+    </p>
   </section>
 
 </main>
 
 <footer class="site-footer">
   <div class="wrap footer-wrap">
-    <div>© 2026 — Calculateur IGI Vaud · Switzerland Sotheby's International Realty</div>
-    <div class="footer-meta">Référence : LI Vaud · art. 70, 72 · LMSD art. 10-11 · barème au 01.01.2026</div>
+    <div>© 2026 — Calculateur IGI Canton de Vaud</div>
+    <div class="footer-meta">LI Vaud · art. 70, 72 · LMSD art. 10-11 · au 01.01.2026</div>
   </div>
 </footer>
 

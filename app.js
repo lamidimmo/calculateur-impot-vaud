@@ -38,80 +38,69 @@ const FRANCHISE = 5000;
 const FLOOR_YEARS = 24;
 
 /* ---------- guide travaux data ---------- */
-const GUIDE_YES = [
-  { ic: "🏊", title: "Construction piscine / jacuzzi", note: "Équipement nouveau = augmentation durable de valeur", tag: "yes" },
-  { ic: "🧖", title: "Ajout d'un sauna", note: "Équipement nouveau", tag: "yes" },
-  { ic: "🏗️", title: "Extension / agrandissement surface habitable", note: "Création de m² nouveaux", tag: "yes" },
-  { ic: "🏠", title: "Aménagement de combles (chambre, bureau)", note: "Transformation en surface habitable", tag: "yes" },
-  { ic: "🌿", title: "Construction véranda / jardin d'hiver", note: "Ajout structurel nouveau", tag: "yes" },
-  { ic: "🚗", title: "Ajout garage / carport", note: "Construction nouvelle — non existante à l'achat", tag: "yes" },
-  { ic: "🍳", title: "Cuisine haut-de-gamme sur bien à cuisine basique", note: "Part de surclassement = plus-value. Remplacement équivalent = entretien.", tag: "yes-partial", tagLabel: "OUI partiel" },
-  { ic: "🛁", title: "Salle de bain haut-de-gamme sur SdB basique", note: "Même logique que cuisine — justifier l'écart de standing", tag: "yes-partial", tagLabel: "OUI partiel" },
-  { ic: "☀️", title: "Installation panneaux solaires / photovoltaïque", note: "Part plus-value (valeur ajoutée au bien) admise par l'ACI Vaud", tag: "yes-partial", tagLabel: "OUI partiel" },
-  { ic: "🌱", title: "Mise aux normes énergétiques au-delà de l'obligation", note: "Part au-delà de l'entretien obligatoire légal", tag: "yes-partial", tagLabel: "OUI partiel" },
-  { ic: "📜", title: "Rachat de servitudes améliorant la propriété", note: "Augmente la valeur juridique du bien", tag: "yes" },
-  { ic: "🏦", title: "Frais bancaires / dossier liés au prêt de construction", note: "Directement liés à la réalisation des travaux", tag: "yes" },
-  { ic: "🤝", title: "Commission de courtage à la vente", note: "Frais liés à l'aliénation — art. 70 LI", tag: "yes" },
-  { ic: "📉", title: "Pénalités résiliation anticipée hypothèque", note: "Conditionnées à la vente — admises par l'ACI", tag: "yes" },
+const GUIDE = [
+  // YES — pleine déduction
+  { type: "yes", title: "Construction piscine / jacuzzi", note: "Équipement nouveau = augmentation durable de valeur" },
+  { type: "yes", title: "Ajout d'un sauna", note: "Équipement nouveau" },
+  { type: "yes", title: "Extension / agrandissement surface habitable", note: "Création de m² nouveaux" },
+  { type: "yes", title: "Aménagement de combles (chambre, bureau)", note: "Transformation en surface habitable" },
+  { type: "yes", title: "Construction véranda / jardin d'hiver", note: "Ajout structurel nouveau" },
+  { type: "yes", title: "Ajout garage / carport", note: "Construction nouvelle — non existante à l'achat" },
+  { type: "yes", title: "Rachat de servitudes améliorant la propriété", note: "Augmente la valeur juridique du bien" },
+  { type: "yes", title: "Frais bancaires liés au prêt de construction", note: "Directement liés à la réalisation des travaux" },
+  { type: "yes", title: "Commission de courtage à la vente", note: "Frais liés à l'aliénation — art. 70 LI" },
+  { type: "yes", title: "Pénalités résiliation anticipée hypothèque", note: "Conditionnées à la vente — admises par l'ACI" },
+
+  // YES partiel
+  { type: "yes-partial", title: "Cuisine haut-de-gamme sur bien à cuisine basique", note: "Part de surclassement = plus-value. Remplacement équivalent = entretien." },
+  { type: "yes-partial", title: "Salle de bain haut-de-gamme sur SdB basique", note: "Même logique que cuisine — justifier l'écart de standing" },
+  { type: "yes-partial", title: "Installation panneaux solaires / photovoltaïque", note: "Part plus-value (valeur ajoutée au bien) admise par l'ACI Vaud" },
+  { type: "yes-partial", title: "Mise aux normes énergétiques au-delà de l'obligation", note: "Part au-delà de l'entretien obligatoire légal" },
+
+  // NO — entretien
+  { type: "no", title: "Peinture intérieure / extérieure", note: "Entretien courant — déductible de l'impôt sur le revenu" },
+  { type: "no", title: "Remplacement chaudière à l'identique", note: "Sans amélioration qualitative = entretien" },
+  { type: "no", title: "Remplacement toiture à l'identique", note: "Remplacement à l'équivalent" },
+  { type: "no", title: "Remplacement appareils électroménagers équivalents", note: "Entretien ordinaire" },
+  { type: "no", title: "Remplacement fenêtres / volets à l'identique", note: "Sans saut qualitatif significatif" },
+  { type: "no", title: "Réparations courantes plomberie / électricité", note: "Maintenance — déductible du revenu annuel" },
+  { type: "no", title: "Entretien jardin courant", note: "Non admis à Vaud (contrairement à d'autres cantons)" },
+  { type: "no", title: "Contributions au fonds de rénovation PPE", note: "Assimilées à entretien par l'ACI Vaud" },
+  { type: "no", title: "Intérêts hypothécaires annuels", note: "Déductibles du revenu annuel — pas de l'IGI" },
 ];
 
-const GUIDE_NO = [
-  { ic: "🎨", title: "Peinture intérieure / extérieure", note: "Entretien courant — déductible de l'impôt sur le revenu", tag: "no" },
-  { ic: "🔥", title: "Remplacement chaudière à l'identique", note: "Sans amélioration qualitative = entretien", tag: "no" },
-  { ic: "🏠", title: "Remplacement toiture à l'identique", note: "Remplacement à l'équivalent", tag: "no" },
-  { ic: "🍽️", title: "Remplacement appareils électroménagers équivalents", note: "Entretien ordinaire", tag: "no" },
-  { ic: "🪟", title: "Remplacement fenêtres / volets à l'identique", note: "Sans saut qualitatif significatif", tag: "no" },
-  { ic: "🔧", title: "Réparations courantes plomberie / électricité", note: "Maintenance — déductible du revenu annuel", tag: "no" },
-  { ic: "🌳", title: "Entretien jardin courant", note: "Non admis à Vaud (contrairement à d'autres cantons)", tag: "no" },
-  { ic: "🏢", title: "Contributions au fonds de rénovation PPE", note: "Assimilées à entretien par l'ACI Vaud", tag: "no" },
-  { ic: "💸", title: "Intérêts hypothécaires annuels", note: "Déductibles du revenu annuel — pas de l'IGI", tag: "no" },
-];
+const TAG_LABEL = {
+  "yes": "OUI",
+  "yes-partial": "OUI partiel",
+  "no": "NON",
+};
 
 /* ============================================================
    Helpers
    ============================================================ */
-
-const fmt = new Intl.NumberFormat("fr-CH", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
-const fmtPct = new Intl.NumberFormat("fr-CH", {
-  style: "percent",
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-});
-function nbsp(s) { return s.replace(/ /g, " "); } // visual: hard-space thousands
-
-function formatMoney(n) {
-  if (!isFinite(n)) return "0,00";
-  return nbsp(fmt.format(n));
-}
-function formatPct(r) {
-  if (!isFinite(r)) return "0 %";
-  return nbsp(fmtPct.format(r));
-}
+const fmt = new Intl.NumberFormat("fr-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtPct = new Intl.NumberFormat("fr-CH", { style: "percent", minimumFractionDigits: 0, maximumFractionDigits: 0 });
+function nbsp(s) { return s.replace(/ /g, " "); }
+function formatMoney(n) { return isFinite(n) ? nbsp(fmt.format(n)) : "0,00"; }
+function formatPct(r) { return isFinite(r) ? nbsp(fmtPct.format(r)) : "0 %"; }
 
 function parseNum(v) {
   if (v == null) return 0;
   if (typeof v === "number") return v;
-  const s = String(v).replace(/[\s  ']/g, "").replace(",", ".");
+  const s = String(v).replace(/[\s  ']/g, "").replace(",", ".");
   if (s === "" || s === "-") return 0;
   const n = parseFloat(s);
   return isFinite(n) ? n : 0;
 }
-
 function parseDate(v) {
   if (!v) return null;
-  // accepts "YYYY-MM-DD" from <input type=date>
   const d = new Date(v);
   return isNaN(d.getTime()) ? null : d;
 }
+function diffDays(a, b) { return Math.round((b - a) / 86400000); }
+function round2(n) { return Math.round(n * 100) / 100; }
 
-function diffDays(a, b) {
-  return Math.round((b - a) / 86400000);
-}
-
-/* VLOOKUP(value, table, col, TRUE) — approximate match, table sorted asc */
+/* VLOOKUP(value, table, col, TRUE) — approximate match */
 function lookupRate(years) {
   let rate = BAREME[0].rate;
   for (const row of BAREME) {
@@ -124,26 +113,23 @@ function lookupRate(years) {
 /* ============================================================
    State + DOM
    ============================================================ */
-const STORAGE_KEY = "igi-vaud-v1";
-
+const STORAGE_KEY = "igi-vaud-v2";
 const inputIds = [
   "prixVente", "prixAchat", "dateAchat", "dateVente",
   "cedule",
   "t1", "t2", "t3", "t4", "t5",
   "courtage", "penalites", "autresVente",
-  "ansPrincipale", "ansSecondaire",
   "estimFiscale", "dateEstim",
+  "ansPrincipaleSlider",
 ];
 
 const state = {
-  occupation: 1,
+  occupation: 1,           // 1 = principale, 2 = secondaire, 3 = mixte
 };
 
-function $(sel) { return document.querySelector(sel); }
-function $$(sel) { return Array.from(document.querySelectorAll(sel)); }
-function set(name, value) {
-  $$(`[data-out="${name}"]`).forEach((el) => { el.textContent = value; });
-}
+function $(s) { return document.querySelector(s); }
+function $$(s) { return Array.from(document.querySelectorAll(s)); }
+function set(name, value) { $$(`[data-out="${name}"]`).forEach((el) => { el.textContent = value; }); }
 
 function readInputs() {
   const data = {};
@@ -151,7 +137,6 @@ function readInputs() {
     const el = document.querySelector(`[data-input="${id}"]`);
     if (!el) return;
     if (el.type === "date") data[id] = parseDate(el.value);
-    else if (el.type === "number") data[id] = parseNum(el.value);
     else data[id] = parseNum(el.value);
   });
   data.occupation = state.occupation;
@@ -159,10 +144,10 @@ function readInputs() {
 }
 
 /* ============================================================
-   Pure compute — mirrors the Excel formulas
+   Compute — same Excel formulas
    ============================================================ */
 function compute(d) {
-  // ① durée réelle (Excel C10): ROUNDDOWN((C9-C8)/365.25,0)
+  // ① durée réelle
   const realYears = (d.dateAchat && d.dateVente)
     ? Math.max(0, Math.floor(diffDays(d.dateAchat, d.dateVente) / 365.25))
     : null;
@@ -171,7 +156,6 @@ function compute(d) {
   const droitsMutation = round2(d.prixAchat * 0.033);
   const fraisNotaire   = round2(d.prixAchat * 0.007);
   const totalAcq       = droitsMutation + fraisNotaire + d.cedule;
-  const totalAcqPct    = d.prixAchat > 0 ? totalAcq / d.prixAchat : 0;
 
   // ③ travaux
   const totalTravaux   = d.t1 + d.t2 + d.t3 + d.t4 + d.t5;
@@ -179,21 +163,23 @@ function compute(d) {
   // ④ frais de vente
   const totalVente     = d.courtage + d.penalites + d.autresVente;
 
-  // ⑤ occupation
-  let statut;
-  if (d.occupation === 1) statut = "Résidence PRINCIPALE";
-  else if (d.occupation === 2) statut = "Résidence SECONDAIRE (occupation personnelle)";
-  else statut = "Mixte — principale + secondaire";
+  // ⑤ occupation — derived from mode + slider
+  let ansPrincipale = 0;
+  let ansSecondaire = 0;
+  if (realYears != null) {
+    if (d.occupation === 1) {                     // Principale uniquement
+      ansPrincipale = realYears;
+      ansSecondaire = 0;
+    } else if (d.occupation === 2) {              // Secondaire uniquement
+      ansPrincipale = 0;
+      ansSecondaire = realYears;
+    } else {                                       // Mixte — slider
+      ansPrincipale = Math.min(Math.max(d.ansPrincipaleSlider || 0, 0), realYears);
+      ansSecondaire = realYears - ansPrincipale;
+    }
+  }
 
-  let coherence;
-  if (realYears == null) coherence = "— saisir les dates —";
-  else if ((d.ansPrincipale + d.ansSecondaire) > realYears)
-    coherence = "⚠️ INCOHÉRENCE — réduire";
-  else
-    coherence = `OK — ${d.ansPrincipale + d.ansSecondaire} an(s) déclaré(s) / ${realYears} réel(s)`;
-
-  // ⟹ durée fiscale pondérée: MIN(C10 + C37, 99)
-  const dureePonderee = realYears == null ? null : Math.min(realYears + d.ansPrincipale, 99);
+  const dureePonderee = realYears == null ? null : Math.min(realYears + ansPrincipale, 99);
 
   // ⑥ option estimation fiscale
   let eligible = false;
@@ -203,7 +189,7 @@ function compute(d) {
   else if (!d.dateAchat) eligLabel = "Saisir la date d'achat";
   else if (!d.dateVente) eligLabel = "Saisir la date de vente";
   else if (d.dateEstim <= d.dateAchat) eligLabel = "Non éligible — estimation antérieure à l'achat";
-  else if (diffDays(d.dateEstim, d.dateVente) >= 3650) { eligLabel = "OUI — éligible (≥ 10 ans en vigueur)"; eligible = true; }
+  else if (diffDays(d.dateEstim, d.dateVente) >= 3650) { eligLabel = "Éligible (≥ 10 ans en vigueur)"; eligible = true; }
   else eligLabel = "Non éligible — moins de 10 ans en vigueur";
 
   const prixRetenu = (eligible && d.estimFiscale > d.prixAchat) ? d.estimFiscale : d.prixAchat;
@@ -212,10 +198,9 @@ function compute(d) {
   const gainBrut = d.prixVente - prixRetenu - totalAcq - totalTravaux - totalVente;
 
   // ⑧ taux & impôt
-  const dureeForRate = dureePonderee;  // null si pas de dates
   let taux = null, gainNet = 0, igi = null;
-  if (dureeForRate != null) {
-    taux = lookupRate(Math.min(dureeForRate, FLOOR_YEARS));
+  if (dureePonderee != null) {
+    taux = lookupRate(Math.min(dureePonderee, FLOOR_YEARS));
     gainNet = Math.max(gainBrut - FRANCHISE, 0);
     igi = gainNet * taux;
   }
@@ -225,30 +210,30 @@ function compute(d) {
   if (taux == null) tipDiffere = "— compléter les données —";
   else if (taux <= 0.07) tipDiffere = "Taux plancher de 7 % déjà atteint";
   else {
-    const tauxNext = lookupRate(Math.min(dureeForRate + 1, FLOOR_YEARS));
+    const tauxNext = lookupRate(Math.min(dureePonderee + 1, FLOOR_YEARS));
     const economie = (taux - tauxNext) * gainNet;
     tipDiffere = economie > 0
-      ? `Économie estimée : ${formatMoney(economie)} CHF (taux passe de ${formatPct(taux)} à ${formatPct(tauxNext)})`
+      ? `Économie ${formatMoney(economie)} CHF (taux ${formatPct(taux)} → ${formatPct(tauxNext)})`
       : "Pas d'économie sur la tranche suivante";
   }
 
   let tipEstim;
   if (d.estimFiscale === 0) tipEstim = "Non renseignée — vérifier si applicable";
   else if (eligible && d.estimFiscale > d.prixAchat) tipEstim = "Avantageuse — retenue comme prix d'acquisition";
-  else if (d.estimFiscale > d.prixAchat) tipEstim = "Valeur supérieure mais conditions non remplies (≥10 ans, postérieure à l'achat)";
+  else if (d.estimFiscale > d.prixAchat) tipEstim = "Valeur supérieure mais conditions non remplies";
   else tipEstim = "Non retenue (prix d'achat ≥ estimation)";
 
   return {
-    realYears, droitsMutation, fraisNotaire, totalAcq, totalAcqPct,
+    realYears,
+    ansPrincipale, ansSecondaire,
+    droitsMutation, fraisNotaire, totalAcq,
     totalTravaux, totalVente,
-    statut, coherence, dureePonderee,
+    dureePonderee,
     eligLabel, prixRetenu,
     gainBrut, taux, gainNet, igi,
     tipDiffere, tipEstim,
   };
 }
-
-function round2(n) { return Math.round(n * 100) / 100; }
 
 /* ============================================================
    Render
@@ -257,39 +242,41 @@ function render() {
   const d = readInputs();
   const r = compute(d);
 
+  // Section 1
   set("dureeReelle", r.realYears == null ? "— saisir les dates —" : `${r.realYears} an${r.realYears > 1 ? "s" : ""}`);
 
+  // Section 2
   set("droitsMutation", formatMoney(r.droitsMutation));
   set("fraisNotaire",   formatMoney(r.fraisNotaire));
   set("totalAcq",       formatMoney(r.totalAcq));
-  set("totalAcqPct",    `(${nbsp(new Intl.NumberFormat("fr-CH",{style:"percent",minimumFractionDigits:2,maximumFractionDigits:2}).format(r.totalAcqPct))} du prix d'achat)`);
 
+  // Sections 3-4
   set("totalTravaux", formatMoney(r.totalTravaux));
   set("totalVente",   formatMoney(r.totalVente));
 
-  set("statut", r.statut);
-  set("coherence", r.coherence);
+  // Section 5 — driven by occupation mode
+  syncOccupationUI(r);
+
   set("dureePonderee", r.dureePonderee == null
     ? "— saisir les dates —"
-    : `${r.dureePonderee} an${r.dureePonderee > 1 ? "s" : ""} (fiscal)`);
+    : `${r.dureePonderee} an${r.dureePonderee > 1 ? "s" : ""}`);
 
+  // Section 6
   set("eligEstim", r.eligLabel);
   set("prixRetenu", formatMoney(r.prixRetenu));
 
-  // gain breakdown (right column)
-  set("kvVente",     formatMoney(d.prixVente));
-  set("kvAcq",       formatMoney(r.prixRetenu));
-  set("kvFraisAcq",  formatMoney(r.totalAcq));
-  set("kvTravaux",   formatMoney(r.totalTravaux));
-  set("kvFraisVente",formatMoney(r.totalVente));
-  set("kvBrut",      formatMoney(r.gainBrut));
-  set("kvNet",       formatMoney(r.gainNet));
-
+  // Result panel — décomposition
+  set("kvVente",      formatMoney(d.prixVente));
+  set("kvAcq",        formatMoney(r.prixRetenu));
+  set("kvFraisAcq",   formatMoney(r.totalAcq));
+  set("kvTravaux",    formatMoney(r.totalTravaux));
+  set("kvFraisVente", formatMoney(r.totalVente));
+  set("kvBrut",       formatMoney(r.gainBrut));
+  set("kvNet",        formatMoney(r.gainNet));
   set("kvDuree", r.dureePonderee == null ? "—" : `${r.dureePonderee} ans`);
   set("kvTaux",  r.taux == null ? "—" : formatPct(r.taux));
-  set("kvIgi",   r.igi == null ? "—" : `${formatMoney(r.igi)} CHF`);
 
-  // hero IGI
+  // Hero IGI
   if (r.igi == null) {
     set("igi", "—");
     set("igiSub", "Saisissez les données pour estimer l'impôt");
@@ -298,23 +285,54 @@ function render() {
     set("igiSub", "Exonéré — gain nul ou sous la franchise de 5 000 CHF");
   } else {
     set("igi", `${formatMoney(r.igi)} CHF`);
-    set("igiSub", `sur un gain net de ${formatMoney(r.gainNet)} CHF · taux ${formatPct(r.taux)} (${r.dureePonderee} ans pondérés)`);
+    set("igiSub", `Gain net ${formatMoney(r.gainNet)} CHF · taux ${formatPct(r.taux)} (${r.dureePonderee} ans pondérés)`);
   }
 
-  // tips
+  // Tips
   set("tipDiffere", r.tipDiffere);
   set("tipEstim", r.tipEstim);
 
-  // highlight active barème row (when present)
+  // Highlight active barème row
   highlightBareme(r.dureePonderee);
 
-  saveState(d);
+  saveState();
+}
+
+/* ============================================================
+   Occupation UI — show/hide panels, sync slider
+   ============================================================ */
+function syncOccupationUI(r) {
+  // detail panels
+  $$(".occ-detail").forEach((el) => {
+    const want = Number(el.dataset.occState) === state.occupation;
+    el.hidden = !want;
+  });
+
+  // active button
+  $$(".occ-btn").forEach((b) => b.classList.toggle("is-active", Number(b.dataset.occ) === state.occupation));
+
+  // slider state for mixte
+  const slider = document.getElementById("ansSlider");
+  if (slider) {
+    const maxY = r.realYears == null ? 0 : r.realYears;
+    if (Number(slider.max) !== maxY) {
+      slider.max = maxY;
+      if (Number(slider.value) > maxY) slider.value = maxY;
+    }
+    // background fill via custom property
+    const pct = maxY > 0 ? (slider.value / maxY) * 100 : 0;
+    slider.style.setProperty("--slider-pct", pct + "%");
+
+    set("totalYearsLabel", r.realYears == null ? "— ans" : `${r.realYears} ans`);
+    set("legPrincipale", r.ansPrincipale);
+    set("legSecondaire", r.ansSecondaire);
+  }
 }
 
 /* ============================================================
    Persistence
    ============================================================ */
-function saveState(d) {
+function saveState() {
   try {
     const raw = {};
     inputIds.forEach((id) => {
@@ -332,19 +350,16 @@ function loadState() {
       const el = document.querySelector(`[data-input="${id}"]`);
       if (el && raw[id] != null) el.value = raw[id];
     });
-    if (raw.__occupation) {
-      state.occupation = Number(raw.__occupation);
-      $$(".seg-btn").forEach((b) => b.classList.toggle("is-active", Number(b.dataset.occ) === state.occupation));
-    }
+    if (raw.__occupation) state.occupation = Number(raw.__occupation);
   } catch {}
 }
 
 /* ============================================================
-   Barème — table + chart
+   Barème — table + SVG chart
    ============================================================ */
 function renderBareme() {
   const tbody = $("#baremeTable tbody");
-  tbody.innerHTML = BAREME.map((r, i) => {
+  tbody.innerHTML = BAREME.map((r) => {
     const isFloor = r.y === 24;
     return `<tr${isFloor ? ' class="floor"' : ""} data-yr="${r.y}">
       <td>${r.y}${isFloor ? "+" : ""}</td>
@@ -352,17 +367,18 @@ function renderBareme() {
       <td>${formatPct(r.rate)}</td>
     </tr>`;
   }).join("");
-
   drawRateChart();
 }
 
 function highlightBareme(years) {
-  $$("#baremeTable tr").forEach((tr) => tr.classList.remove("is-current"));
+  $$("#baremeTable tr").forEach((tr) => {
+    tr.style.outline = "";
+    tr.style.outlineOffset = "";
+  });
   if (years == null) return;
   const y = Math.min(years, 24);
   const row = $(`#baremeTable tr[data-yr="${y}"]`);
   if (row) {
-    row.classList.add("is-current");
     row.style.outline = "2px solid var(--accent)";
     row.style.outlineOffset = "-2px";
   }
@@ -384,12 +400,9 @@ function drawRateChart() {
     grid += `<text x="${P.l - 6}" y="${y(r) + 3}" text-anchor="end" font-size="9" fill="#7a8aa0" font-family="Inter">${Math.round(r * 100)}%</text>`;
   }
 
-  // path
   let d = "";
   BAREME.forEach((p, i) => { d += `${i === 0 ? "M" : "L"} ${x(p.y).toFixed(1)} ${y(p.rate).toFixed(1)} `; });
-  // area under curve
   let area = d + `L ${x(xMax).toFixed(1)} ${H - P.b} L ${x(xMin).toFixed(1)} ${H - P.b} Z`;
-
   let pts = BAREME.map((p) => `<circle cx="${x(p.y).toFixed(1)}" cy="${y(p.rate).toFixed(1)}" r="2.5" fill="#0b1f33"/>`).join("");
 
   let xLabels = "";
@@ -413,48 +426,76 @@ function drawRateChart() {
 }
 
 /* ============================================================
-   Guide travaux — populate lists
+   Guide travaux — unified list with filter + search
    ============================================================ */
+const guideState = { filter: "all", q: "" };
+
 function renderGuide() {
-  $("#listYes").innerHTML = GUIDE_YES.map(itemHTML).join("");
-  $("#listNo").innerHTML  = GUIDE_NO.map(itemHTML).join("");
+  const list = $("#guideList");
+  const q = guideState.q.trim().toLowerCase();
+  const filtered = GUIDE.filter((g) => {
+    if (guideState.filter === "yes" && g.type === "no") return false;
+    if (guideState.filter === "no" && g.type !== "no") return false;
+    if (q && !(g.title.toLowerCase().includes(q) || g.note.toLowerCase().includes(q))) return false;
+    return true;
+  });
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="g-empty">Aucun résultat pour « ${guideState.q} »</div>`;
+    return;
+  }
+  list.innerHTML = filtered.map((g) => {
+    const cls = g.type === "yes" ? "is-yes" : g.type === "yes-partial" ? "is-yes-partial" : "is-no";
+    const mark = g.type === "no"
+      ? `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`
+      : `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>`;
+    return `<div class="g-item ${cls}">
+      <span class="g-mark">${mark}</span>
+      <div class="g-body">
+        <div class="g-title">${g.title}</div>
+        <div class="g-note">${g.note}</div>
+      </div>
+      <span class="g-tag">${TAG_LABEL[g.type]}</span>
+    </div>`;
+  }).join("");
 }
-function itemHTML(g) {
-  const lbl = g.tagLabel || (g.tag === "no" ? "NON" : "OUI");
-  return `<li>
-    <span class="g-ic">${g.ic}</span>
-    <span class="g-title">${g.title}</span>
-    <span class="g-tag ${g.tag}">${lbl}</span>
-    <span class="g-note">${g.note}</span>
-  </li>`;
+
+function initGuide() {
+  renderGuide();
+  $("#guideSearch").addEventListener("input", (e) => { guideState.q = e.target.value; renderGuide(); });
+  $$(".chip").forEach((c) => c.addEventListener("click", () => {
+    $$(".chip").forEach((x) => x.classList.remove("is-active"));
+    c.classList.add("is-active");
+    guideState.filter = c.dataset.filter;
+    renderGuide();
+  }));
 }
 
 /* ============================================================
    Tabs
    ============================================================ */
-function initTabs() {
-  const tabs = $$(".tab");
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      const name = tab.dataset.tab;
-      tabs.forEach((t) => {
-        const on = t === tab;
-        t.classList.toggle("is-active", on);
-        t.setAttribute("aria-selected", on ? "true" : "false");
-      });
-      $$(".panel").forEach((p) => {
-        const on = p.id === `panel-${name}`;
-        p.classList.toggle("is-active", on);
-        p.hidden = !on;
-      });
-      // smooth scroll back to top of main area
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+function gotoTab(name) {
+  $$(".tab").forEach((t) => {
+    const on = t.dataset.tab === name;
+    t.classList.toggle("is-active", on);
+    t.setAttribute("aria-selected", on ? "true" : "false");
   });
+  $$(".panel").forEach((p) => {
+    const on = p.id === `panel-${name}`;
+    p.classList.toggle("is-active", on);
+    p.hidden = !on;
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function initTabs() {
+  $$(".tab").forEach((tab) => tab.addEventListener("click", () => gotoTab(tab.dataset.tab)));
+  $$("[data-goto]").forEach((a) => a.addEventListener("click", (e) => {
+    e.preventDefault();
+    gotoTab(a.dataset.goto);
+  }));
 }
 
 /* ============================================================
-   Numeric input — light auto-formatting (grouping on blur)
+   Numeric input — formatting on blur
    ============================================================ */
 function attachNumericFormatting() {
   $$("input.num").forEach((el) => {
@@ -471,23 +512,54 @@ function attachNumericFormatting() {
 }
 
 /* ============================================================
+   Last verified — fetched from last-checked.json
+   ============================================================ */
+async function loadLastVerified() {
+  const el = document.getElementById("lastVerifiedDate");
+  if (!el) return;
+  try {
+    const res = await fetch("last-checked.json", { cache: "no-cache" });
+    if (!res.ok) throw new Error("no file");
+    const data = await res.json();
+    if (data.date) {
+      // format YYYY-MM-DD → DD.MM.YYYY
+      const [y, m, d] = data.date.split("-");
+      el.textContent = `Vérifié ${d}.${m}.${y}`;
+    }
+    if (data.status === "changes_detected") {
+      const badge = document.getElementById("lastVerifiedBadge");
+      if (badge) {
+        badge.style.background = "var(--warn-soft)";
+        badge.style.color = "var(--warn)";
+        badge.style.borderColor = "#e9d6a2";
+        badge.querySelector(".check-dot").style.background = "var(--warn)";
+        badge.title = "Changement détecté sur une source officielle — voir les issues GitHub";
+      }
+    }
+  } catch {
+    el.textContent = "Sources à vérifier";
+  }
+}
+
+/* ============================================================
    Init
    ============================================================ */
 function init() {
   renderBareme();
-  renderGuide();
+  initGuide();
   initTabs();
   attachNumericFormatting();
+  loadLastVerified();
 
-  // segmented occupation
-  $$(".seg-btn").forEach((b) => {
-    b.addEventListener("click", () => {
-      $$(".seg-btn").forEach((x) => x.classList.remove("is-active"));
-      b.classList.add("is-active");
-      state.occupation = Number(b.dataset.occ);
-      render();
-    });
-  });
+  // occupation buttons
+  $$(".occ-btn").forEach((b) => b.addEventListener("click", () => {
+    state.occupation = Number(b.dataset.occ);
+    render();
+  }));
+
+  // slider — live update on input
+  const slider = document.getElementById("ansSlider");
+  if (slider) slider.addEventListener("input", render);
 
   // input listeners
   $$("[data-input]").forEach((el) => {
@@ -497,9 +569,8 @@ function init() {
 
   // reset
   $("#resetBtn").addEventListener("click", () => {
-    $$("[data-input]").forEach((el) => { el.value = ""; });
+    $$("[data-input]").forEach((el) => { el.value = el.type === "range" ? 0 : ""; });
     state.occupation = 1;
-    $$(".seg-btn").forEach((b) => b.classList.toggle("is-active", Number(b.dataset.occ) === 1));
     try { localStorage.removeItem(STORAGE_KEY); } catch {}
     render();
   });
