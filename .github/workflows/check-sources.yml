@@ -1,0 +1,141 @@
+name: Vérification mensuelle des sources fiscales
+
+on:
+  schedule:
+    # 1er du mois à 09:00 UTC
+    - cron: "0 9 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérifier les sources officielles
+        id: check
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Sources canoniques à surveiller — ajouter/retirer ici si besoin
+          declare -A SOURCES=(
+            ["LI_Vaud_642_11"]="https://prestations.vd.ch/pub/blv-publication/actes/consolide/642.11"
+            ["ACI_IGI_info"]="https://www.vd.ch/themes/etat-droit-finances/impots/impots-pour-les-individus/impots-immobiliers/impot-sur-les-gains-immobiliers-igi"
+          )
+
+          NOW=$(date -u +%Y-%m-%d)
+          CHANGED_LIST=""
+
+          # Snapshot précédent
+          if [ -f sources-snapshot.json ]; then
+            PREV=$(cat sources-snapshot.json)
+          else
+            PREV="{}"
+          fi
+
+          # Construire le nouveau snapshot et comparer
+          NEW="{"
+          FIRST=1
+          for KEY in "${!SOURCES[@]}"; do
+            URL="${SOURCES[$KEY]}"
+            CONTENT=$(curl -sL --max-time 30 \
+              -A "calculateur-impot-vaud monthly-source-check" \
+              "$URL" 2>/dev/null || echo "__FETCH_ERROR__")
+
+            if [ "$CONTENT" = "__FETCH_ERROR__" ]; then
+              HASH="fetch_error"
+              echo "::warning::Impossible de récupérer $URL"
+            else
+              # Normaliser pour ignorer les variations cosmétiques (espaces, balises dynamiques)
+              HASH=$(printf '%s' "$CONTENT" \
+                | tr -d '\r' \
+                | sed -E 's/<script[^>]*>.*<\/script>//g; s/<style[^>]*>.*<\/style>//g; s/csrfmiddlewaretoken=[a-zA-Z0-9]+//g; s/[ \t]+/ /g' \
+                | sha256sum | cut -d' ' -f1)
+            fi
+
+            PREV_HASH=$(printf '%s' "$PREV" | jq -r --arg k "$KEY" '.[$k].hash // ""')
+
+            if [ -n "$PREV_HASH" ] && [ "$PREV_HASH" != "$HASH" ] && [ "$HASH" != "fetch_error" ] && [ "$PREV_HASH" != "fetch_error" ]; then
+              CHANGED_LIST="${CHANGED_LIST}- **${KEY}** — ${URL}\n  - hash précédent : \`${PREV_HASH:0:12}…\`\n  - hash actuel    : \`${HASH:0:12}…\`\n"
+            fi
+
+            [ $FIRST -eq 0 ] && NEW="$NEW,"
+            FIRST=0
+            NEW="$NEW\"$KEY\":{\"hash\":\"$HASH\",\"url\":\"$URL\",\"checked\":\"$NOW\"}"
+          done
+          NEW="$NEW}"
+
+          # Écrire les fichiers
+          printf '%s' "$NEW" | jq . > sources-snapshot.json
+
+          if [ -n "$CHANGED_LIST" ]; then
+            STATUS="changes_detected"
+          else
+            STATUS="ok"
+          fi
+
+          jq -n \
+            --arg date "$NOW" \
+            --arg status "$STATUS" \
+            --argjson count ${#SOURCES[@]} \
+            '{date: $date, status: $status, sources_count: $count}' \
+            > last-checked.json
+
+          # Outputs pour les étapes suivantes
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+          {
+            echo "changed<<EOF_CHANGED"
+            printf '%b' "$CHANGED_LIST"
+            echo "EOF_CHANGED"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "---"
+          echo "Statut : $STATUS"
+          cat last-checked.json
+
+      - name: Commit les snapshots
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add last-checked.json sources-snapshot.json
+          if git diff --cached --quiet; then
+            echo "Aucun changement à committer."
+          else
+            git commit -m "chore: vérification mensuelle des sources fiscales (${{ steps.check.outputs.status }})"
+            git push
+          fi
+
+      - name: Ouvrir une issue si changements détectés
+        if: steps.check.outputs.status == 'changes_detected'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const changed = `${{ steps.check.outputs.changed }}`;
+            const today = new Date().toISOString().slice(0, 10);
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `⚠️ Sources fiscales modifiées — vérification du ${today}`,
+              body: [
+                `La vérification mensuelle automatique a détecté des changements sur les sources officielles suivantes :`,
+                ``,
+                changed,
+                ``,
+                `### Que faire ?`,
+                ``,
+                `1. Consulter manuellement les URLs ci-dessus pour identifier ce qui a changé.`,
+                `2. Si la loi / le barème ont effectivement été modifiés, mettre à jour :`,
+                `   - \`app.js\` (constantes \`BAREME\`, \`FRANCHISE\`, \`FLOOR_YEARS\`, taux 3,3 % et 0,7 %)`,
+                `   - \`index.html\` (mention "au 01.01.2026" dans le badge et le footer)`,
+                `   - \`DEPLOYMENT.md\` (tableau des règles)`,
+                `3. Sinon, fermer cette issue — le snapshot est déjà à jour.`,
+                ``,
+                `_Issue générée automatiquement par le workflow \`check-sources.yml\`._`,
+              ].join('\n'),
+              labels: ['sources-fiscales', 'verification-mensuelle'],
+            });
