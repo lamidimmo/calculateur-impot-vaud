@@ -472,6 +472,13 @@ function rateAt(year) {
 }
 const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
+/* set the year readout with correct FR pluralisation (0 & 1 → "an", ≥2 → "ans") */
+function setHeroYear(n) {
+  if (!HERO.el.year) return;
+  HERO.el.year.textContent = n;
+  if (HERO.el.yearUnit) HERO.el.yearUnit.textContent = Math.abs(Number(n)) >= 2 ? "ans" : "an";
+}
+
 function buildHero() {
   const svg = document.getElementById("heroChart");
   if (!svg) return;
@@ -527,6 +534,7 @@ function buildHero() {
     userLabel: document.getElementById("htlUserLabel"),
     rate: document.getElementById("heroRate"),
     year: document.getElementById("heroYear"),
+    yearUnit: document.getElementById("heroYearUnit"),
   };
   HERO.totalLen = HERO.el.curve.getTotalLength();
   HERO.el.curve.style.strokeDasharray = HERO.totalLen;
@@ -541,7 +549,7 @@ function heroFinalState() {
   el.marker.setAttribute("cx", heroX(24).toFixed(1));
   el.marker.setAttribute("cy", heroY(BAREME[24].rate).toFixed(1));
   el.rate.textContent = "7 %";
-  el.year.textContent = "24";
+  setHeroYear(24);
   HERO.introDone = true;
   if (HERO.hasPending) applyHeroUser(HERO.pendingUser);
 }
@@ -559,7 +567,7 @@ function runHeroIntro() {
   el.marker.setAttribute("cx", heroX(0).toFixed(1));
   el.marker.setAttribute("cy", heroY(0.30).toFixed(1));
   el.rate.textContent = "30 %";
-  el.year.textContent = "0";
+  setHeroYear(0);
 
   // Respect reduced-motion → jump straight to the final chart.
   if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -596,7 +604,7 @@ function runHeroIntro() {
     el.curve.style.strokeDashoffset = HERO.totalLen * (1 - e);
     const year = e * 24;
     el.rate.textContent = Math.round(rateAt(year) * 100) + " %";
-    el.year.textContent = Math.round(year);
+    setHeroYear(Math.round(year));
     if (t < 1) HERO.raf = requestAnimationFrame(frame);
     else heroFinalState();
   }
@@ -611,7 +619,7 @@ function applyHeroUser(u) {
     if (HERO.introDone) {
       el.marker.setAttribute("opacity", "1");
       el.rate.textContent = "7 %";
-      el.year.textContent = "24";
+      setHeroYear(24);
     }
     return;
   }
@@ -630,7 +638,7 @@ function applyHeroUser(u) {
   el.user.setAttribute("opacity", "1");
   el.marker.setAttribute("opacity", "0");
   el.rate.textContent = Math.round(u.rate * 100) + " %";
-  el.year.textContent = u.years;
+  setHeroYear(u.years);
 }
 
 function updateHeroUserPoint(years, rate) {
