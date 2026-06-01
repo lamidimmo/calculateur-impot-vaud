@@ -311,6 +311,9 @@ function render() {
   // Highlight active barème row
   highlightBareme(r.dureePonderee);
 
+  // Hero timeline — place the user's point on the degressive curve
+  updateHeroUserPoint(r.dureePonderee, r.taux);
+
   saveState();
 }
 
@@ -442,6 +445,202 @@ function drawRateChart() {
 }
 
 /* ============================================================
+   Hero timeline — animation « le temps réduit l'impôt »
+   Curseur 0→24 ans, courbe qui se trace, taux 30%→7%,
+   puis point live de la durée pondérée de l'utilisateur.
+   ============================================================ */
+const HERO = {
+  W: 720, H: 220,
+  P: { l: 44, r: 92, t: 22, b: 34 },
+  minR: 0.05, maxR: 0.32,
+  raf: 0, introDone: false, totalLen: 0,
+  pendingUser: null, hasPending: false,
+  el: {},
+};
+function heroX(year) {
+  return HERO.P.l + (Math.max(0, Math.min(24, year)) / 24) * (HERO.W - HERO.P.l - HERO.P.r);
+}
+function heroY(rate) {
+  return HERO.H - HERO.P.b - ((rate - HERO.minR) / (HERO.maxR - HERO.minR)) * (HERO.H - HERO.P.t - HERO.P.b);
+}
+function rateAt(year) {
+  year = Math.max(0, Math.min(24, year));
+  const i = Math.floor(year);
+  if (i >= 24) return BAREME[24].rate;
+  const a = BAREME[i].rate, b = BAREME[i + 1].rate;
+  return a + (b - a) * (year - i);
+}
+const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+function buildHero() {
+  const svg = document.getElementById("heroChart");
+  if (!svg) return;
+  const { W, H, P } = HERO;
+
+  const pts = BAREME.map((p) => [heroX(p.y), heroY(p.rate)]);
+  const curveD = pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(" ");
+  const areaD = curveD + ` L ${heroX(24).toFixed(1)} ${(H - P.b).toFixed(1)} L ${heroX(0).toFixed(1)} ${(H - P.b).toFixed(1)} Z`;
+
+  let grid = "";
+  for (const r of [0.30, 0.20, 0.10]) {
+    grid += `<line class="htl-grid" x1="${P.l}" x2="${W - P.r}" y1="${heroY(r).toFixed(1)}" y2="${heroY(r).toFixed(1)}"/>`;
+    grid += `<text class="htl-rate-label" x="${P.l - 8}" y="${(heroY(r) + 3).toFixed(1)}" text-anchor="end">${Math.round(r * 100)}%</text>`;
+  }
+  let xlabels = "";
+  for (const v of [0, 6, 12, 18, 24]) {
+    xlabels += `<text class="htl-axis-label" x="${heroX(v).toFixed(1)}" y="${H - 12}" text-anchor="middle">${v}${v === 24 ? "+" : ""} ans</text>`;
+  }
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="htlArea" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#b48a47" stop-opacity=".34"/>
+        <stop offset="100%" stop-color="#b48a47" stop-opacity="0"/>
+      </linearGradient>
+      <clipPath id="htlClip"><rect id="htlClipRect" x="0" y="0" width="0" height="${H}"/></clipPath>
+    </defs>
+    ${grid}
+    ${xlabels}
+    <path d="${areaD}" fill="url(#htlArea)" clip-path="url(#htlClip)"/>
+    <path id="htlCurve" class="htl-curve" d="${curveD}"/>
+    <g id="htlUser" opacity="0">
+      <line id="htlUserGuide" class="htl-user-guide" x1="0" y1="0" x2="0" y2="${(H - P.b).toFixed(1)}"/>
+      <circle id="htlUserPulse" class="htl-user-pulse" cx="0" cy="0" r="6">
+        <animate attributeName="r" values="6;15;6" dur="2.2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".5;0;.5" dur="2.2s" repeatCount="indefinite"/>
+      </circle>
+      <circle id="htlUserDot" class="htl-user-dot" cx="0" cy="0" r="5.5"/>
+      <text id="htlUserLabel" class="htl-user-label" x="0" y="0" text-anchor="middle">votre bien</text>
+    </g>
+    <circle id="htlMarker" class="htl-marker" cx="${heroX(0).toFixed(1)}" cy="${heroY(0.30).toFixed(1)}" r="6"/>
+  `;
+
+  HERO.el = {
+    svg,
+    curve: document.getElementById("htlCurve"),
+    clipRect: document.getElementById("htlClipRect"),
+    marker: document.getElementById("htlMarker"),
+    user: document.getElementById("htlUser"),
+    userGuide: document.getElementById("htlUserGuide"),
+    userPulse: document.getElementById("htlUserPulse"),
+    userDot: document.getElementById("htlUserDot"),
+    userLabel: document.getElementById("htlUserLabel"),
+    rate: document.getElementById("heroRate"),
+    year: document.getElementById("heroYear"),
+  };
+  HERO.totalLen = HERO.el.curve.getTotalLength();
+  HERO.el.curve.style.strokeDasharray = HERO.totalLen;
+  HERO.el.curve.style.strokeDashoffset = HERO.totalLen;
+}
+
+function heroFinalState() {
+  const { el, W, P } = HERO;
+  el.curve.style.strokeDashoffset = 0;
+  el.clipRect.setAttribute("width", W - P.r);
+  el.marker.setAttribute("opacity", "1");
+  el.marker.setAttribute("cx", heroX(24).toFixed(1));
+  el.marker.setAttribute("cy", heroY(BAREME[24].rate).toFixed(1));
+  el.rate.textContent = "7 %";
+  el.year.textContent = "24";
+  HERO.introDone = true;
+  if (HERO.hasPending) applyHeroUser(HERO.pendingUser);
+}
+
+function runHeroIntro() {
+  const { el } = HERO;
+  if (!el.curve) return;
+  HERO.introDone = false;
+  el.user.setAttribute("opacity", "0");
+  // reset to start
+  cancelAnimationFrame(HERO.raf);
+  el.clipRect.setAttribute("width", 0);
+  el.curve.style.strokeDashoffset = HERO.totalLen;
+  el.marker.setAttribute("opacity", "1");
+  el.marker.setAttribute("cx", heroX(0).toFixed(1));
+  el.marker.setAttribute("cy", heroY(0.30).toFixed(1));
+  el.rate.textContent = "30 %";
+  el.year.textContent = "0";
+
+  // Respect reduced-motion → jump straight to the final chart.
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    heroFinalState();
+    return;
+  }
+  // If the page is hidden (background tab), rAF is paused: show the final
+  // chart now and replay the intro once the page becomes visible.
+  if (document.hidden) {
+    heroFinalState();
+    if (!HERO._visBound) {
+      HERO._visBound = true;
+      document.addEventListener("visibilitychange", function onVis() {
+        if (!document.hidden) {
+          document.removeEventListener("visibilitychange", onVis);
+          HERO._visBound = false;
+          runHeroIntro();
+        }
+      });
+    }
+    return;
+  }
+  const dur = 2200;
+  let start = null;
+  function frame(now) {
+    if (start == null) start = now;
+    let t = (now - start) / dur;
+    if (t > 1) t = 1;
+    const e = easeInOutCubic(t);
+    const pt = el.curve.getPointAtLength(HERO.totalLen * e);
+    el.marker.setAttribute("cx", pt.x.toFixed(1));
+    el.marker.setAttribute("cy", pt.y.toFixed(1));
+    el.clipRect.setAttribute("width", pt.x.toFixed(1));
+    el.curve.style.strokeDashoffset = HERO.totalLen * (1 - e);
+    const year = e * 24;
+    el.rate.textContent = Math.round(rateAt(year) * 100) + " %";
+    el.year.textContent = Math.round(year);
+    if (t < 1) HERO.raf = requestAnimationFrame(frame);
+    else heroFinalState();
+  }
+  HERO.raf = requestAnimationFrame(frame);
+}
+
+function applyHeroUser(u) {
+  const { el, W, H, P } = HERO;
+  if (!el.user) return;
+  if (!u || u.years == null || u.rate == null) {
+    el.user.setAttribute("opacity", "0");
+    if (HERO.introDone) {
+      el.marker.setAttribute("opacity", "1");
+      el.rate.textContent = "7 %";
+      el.year.textContent = "24";
+    }
+    return;
+  }
+  const yClamp = Math.max(0, Math.min(24, u.years));
+  const px = heroX(yClamp), py = heroY(u.rate);
+  el.userGuide.setAttribute("x1", px.toFixed(1)); el.userGuide.setAttribute("x2", px.toFixed(1));
+  el.userGuide.setAttribute("y1", py.toFixed(1)); el.userGuide.setAttribute("y2", (H - P.b).toFixed(1));
+  el.userPulse.setAttribute("cx", px.toFixed(1)); el.userPulse.setAttribute("cy", py.toFixed(1));
+  el.userDot.setAttribute("cx", px.toFixed(1)); el.userDot.setAttribute("cy", py.toFixed(1));
+  let anchor = "middle";
+  if (px > W - P.r - 36) anchor = "end";
+  else if (px < P.l + 36) anchor = "start";
+  el.userLabel.setAttribute("x", px.toFixed(1));
+  el.userLabel.setAttribute("y", (py - 14).toFixed(1));
+  el.userLabel.setAttribute("text-anchor", anchor);
+  el.user.setAttribute("opacity", "1");
+  el.marker.setAttribute("opacity", "0");
+  el.rate.textContent = Math.round(u.rate * 100) + " %";
+  el.year.textContent = u.years;
+}
+
+function updateHeroUserPoint(years, rate) {
+  const u = (years == null || rate == null) ? null : { years, rate };
+  HERO.pendingUser = u;
+  HERO.hasPending = true;
+  if (HERO.introDone) applyHeroUser(u);
+}
+
+/* ============================================================
    Guide travaux — unified list with filter + search
    ============================================================ */
 const guideState = { filter: "all", q: "" };
@@ -562,10 +761,15 @@ async function loadLastVerified() {
    ============================================================ */
 function init() {
   renderBareme();
+  buildHero();
   initGuide();
   initTabs();
   attachNumericFormatting();
   loadLastVerified();
+
+  // hero replay button
+  const replay = document.getElementById("heroReplay");
+  if (replay) replay.addEventListener("click", runHeroIntro);
 
   // occupation buttons
   $$(".occ-btn").forEach((b) => b.addEventListener("click", () => {
@@ -593,6 +797,9 @@ function init() {
 
   loadState();
   render();
+
+  // play the timeline animation once on load
+  runHeroIntro();
 }
 
 document.addEventListener("DOMContentLoaded", init);

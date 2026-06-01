@@ -49,6 +49,26 @@
   <!-- ====== CALCULATEUR ====== -->
   <section class="panel is-active" id="panel-calculateur" role="tabpanel">
 
+    <!-- Bannière animée : le temps réduit l'impôt -->
+    <section class="hero-tl" id="heroTL" aria-label="Le taux IGI décroît avec la durée de détention">
+      <div class="hero-tl-copy">
+        <div class="hero-tl-eyebrow">Le temps réduit l'impôt</div>
+        <h2 class="hero-tl-title">Plus vous détenez,<br />moins vous payez</h2>
+        <p class="hero-tl-sub">Le taux IGI décroît de <strong>30 %</strong> à <strong>7 %</strong> sur 24 ans. Les années en résidence principale comptent double.</p>
+        <button class="hero-tl-replay" id="heroReplay" type="button">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          Rejouer
+        </button>
+      </div>
+      <div class="hero-tl-viz">
+        <div class="hero-tl-readout">
+          <span class="hero-tl-rate" id="heroRate">30 %</span>
+          <span class="hero-tl-year">à <span id="heroYear">0</span> an</span>
+        </div>
+        <svg id="heroChart" viewBox="0 0 720 220" preserveAspectRatio="xMidYMid meet" role="img"></svg>
+      </div>
+    </section>
+
     <div class="layout">
       <!-- ============ FORM ============ -->
       <div class="form-col">
