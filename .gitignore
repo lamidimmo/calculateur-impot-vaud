@@ -3,3 +3,9 @@
 
 # local Claude Code settings (per-user)
 .claude/settings.local.json
+
+# Projets distincts hébergés dans le même dossier (dépôts git séparés)
+/Dev foncier/
+/klova-crm/
+/premiere-cowork-bridge/
+/CRM Aquéreur/
