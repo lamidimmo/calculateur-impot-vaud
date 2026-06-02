@@ -43,7 +43,7 @@ const FLOOR_YEARS = 24;
      e-mail, copier la "Access Key"), puis coller ci-dessous.
      Les demandes arriveront sur l'e-mail associé à la clé.
    ============================================================ */
-const WEB3FORMS_KEY = "REMPLACER_PAR_VOTRE_CLE_WEB3FORMS";
+const WEB3FORMS_KEY = "09809340-1199-4890-acbd-dc8fa2d65f54";
 
 /* ---------- guide travaux data ---------- */
 const GUIDE = [
