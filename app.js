@@ -834,7 +834,7 @@ function initContactForm() {
       const data = await res.json();
       if (data.success) {
         form.reset();
-        setStatus("ok", "Merci ! Votre demande a bien été envoyée — nos équipes vous recontactent sous 48 h.");
+        setStatus("ok", "Merci ! Votre demande a bien été envoyée. Notre expert vous recontacte sous 48 h.");
       } else {
         setStatus("err", "Une erreur est survenue. Réessayez ou contactez-nous directement.");
       }

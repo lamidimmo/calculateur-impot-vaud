@@ -1132,6 +1132,46 @@ input[type="range"]:focus::-webkit-slider-thumb {
 }
 .cta-btn:hover svg { transform: translateX(3px); }
 
+/* ---------- profil expert (confiance) ---------- */
+.expert-mini {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,.12);
+}
+.expert-photo {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,.22);
+  background: #1b3a5b;
+  flex-shrink: 0;
+}
+.expert-photo.lg { width: 58px; height: 58px; border-color: var(--line); }
+.expert-photo.is-fallback {
+  background: #1b3a5b url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff' fill-opacity='0.66'%3E%3Cpath d='M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-5 0-9 2.5-9 6v2h18v-2c0-3.5-4-6-9-6z'/%3E%3C/svg%3E") center/64% no-repeat;
+}
+.modal-expert .expert-photo.is-fallback { background-color: var(--ink); }
+.expert-id { display: flex; flex-direction: column; min-width: 0; }
+.expert-name { font-weight: 600; font-size: 14px; line-height: 1.3; }
+.expert-role { font-size: 12px; line-height: 1.3; }
+.cta-card .expert-name { color: #fff; }
+.cta-card .expert-role { color: rgba(255,255,255,.62); }
+
+.modal-expert {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.modal-expert .expert-name { color: var(--ink); font-size: 15px; }
+.modal-expert .expert-role { color: var(--muted); }
+.modal-expert .modal-kicker { margin-bottom: 3px; }
+
 /* ---------- modale contact ---------- */
 .modal-overlay {
   position: fixed;
