@@ -46,7 +46,7 @@ const EXPERT = {
   role: "Conseiller en vente immobilière",
   agency: "",                       // livrable neutre, sans marque
   phone: "+41 76 715 50 59",
-  email: "",                        // à compléter
+  email: "lamidikevin@icloud.com",
 };
 
 /* ============================================================
