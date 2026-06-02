@@ -44,9 +44,9 @@ const FLOOR_YEARS = 24;
 const EXPERT = {
   name: "Kevin Lamidi",
   role: "Conseiller en vente immobilière",
-  agency: "Lamidimmo",
-  phone: "",   // à compléter
-  email: "",   // à compléter
+  agency: "",                       // livrable neutre, sans marque
+  phone: "+41 76 715 50 59",
+  email: "",                        // à compléter
 };
 
 /* ============================================================
@@ -880,7 +880,7 @@ function buildPdfReport(d, r) {
   const el = document.getElementById("pdfReport");
   if (!el) return;
   const hasData = r.igi != null;
-  const contactBits = [EXPERT.agency, EXPERT.phone, EXPERT.email].filter(Boolean).join("  ·  ");
+  const contactBits = [EXPERT.role, EXPERT.phone, EXPERT.email].filter(Boolean).join("  ·  ");
 
   const estim = hasData ? `
     <table class="pdfr-table">
