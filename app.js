@@ -37,6 +37,14 @@ const BAREME = [
 const FRANCHISE = 5000;
 const FLOOR_YEARS = 24;
 
+/* ============================================================
+   Web3Forms — clé d'accès pour le formulaire de contact
+   → Obtenir gratuitement sur https://web3forms.com (saisir votre
+     e-mail, copier la "Access Key"), puis coller ci-dessous.
+     Les demandes arriveront sur l'e-mail associé à la clé.
+   ============================================================ */
+const WEB3FORMS_KEY = "REMPLACER_PAR_VOTRE_CLE_WEB3FORMS";
+
 /* ---------- guide travaux data ---------- */
 const GUIDE = [
   // YES — pleine déduction
@@ -765,6 +773,81 @@ async function loadLastVerified() {
 }
 
 /* ============================================================
+   Contact — modale + envoi Web3Forms
+   ============================================================ */
+function initContactForm() {
+  const modal = document.getElementById("contactModal");
+  const openBtn = document.getElementById("ctaOpen");
+  const closeBtn = document.getElementById("modalClose");
+  const form = document.getElementById("contactForm");
+  const statusEl = document.getElementById("cfStatus");
+  const submitBtn = document.getElementById("cfSubmit");
+  const keyInput = document.getElementById("web3formsKey");
+  if (!modal || !openBtn || !form) return;
+
+  keyInput.value = WEB3FORMS_KEY;
+
+  let lastFocus = null;
+  const onKey = (e) => { if (e.key === "Escape") close(); };
+  function open() {
+    lastFocus = document.activeElement;
+    modal.hidden = false;
+    document.body.style.overflow = "hidden";
+    setTimeout(() => document.getElementById("cfName") && document.getElementById("cfName").focus(), 40);
+    document.addEventListener("keydown", onKey);
+  }
+  function close() {
+    modal.hidden = true;
+    document.body.style.overflow = "";
+    document.removeEventListener("keydown", onKey);
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  function setStatus(type, msg) {
+    statusEl.className = "cf-status" + (type ? " show " + type : "");
+    statusEl.textContent = msg || "";
+  }
+
+  openBtn.addEventListener("click", open);
+  closeBtn.addEventListener("click", close);
+  modal.addEventListener("click", (e) => { if (e.target === modal) close(); });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (form.botcheck && form.botcheck.checked) return; // honeypot
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    if (!WEB3FORMS_KEY || WEB3FORMS_KEY.indexOf("REMPLACER") === 0) {
+      setStatus("err", "Formulaire en cours d'activation — merci de réessayer prochainement.");
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Envoi…";
+    setStatus("", "");
+    try {
+      const payload = Object.fromEntries(new FormData(form).entries());
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        form.reset();
+        setStatus("ok", "Merci ! Votre demande a bien été envoyée — nos équipes vous recontactent sous 48 h.");
+      } else {
+        setStatus("err", "Une erreur est survenue. Réessayez ou contactez-nous directement.");
+      }
+    } catch {
+      setStatus("err", "Connexion impossible. Vérifiez votre réseau et réessayez.");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Envoyer ma demande";
+    }
+  });
+}
+
+/* ============================================================
    Init
    ============================================================ */
 function init() {
@@ -772,6 +855,7 @@ function init() {
   buildHero();
   initGuide();
   initTabs();
+  initContactForm();
   attachNumericFormatting();
   loadLastVerified();
 

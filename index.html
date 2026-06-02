@@ -294,6 +294,20 @@
             </ul>
           </div>
 
+          <!-- CTA contact -->
+          <div class="cta-card">
+            <div class="cta-glow" aria-hidden="true"></div>
+            <div class="cta-body">
+              <div class="cta-kicker">Vous vendez un bien ?</div>
+              <h3 class="cta-title">Faites estimer votre bien par nos équipes</h3>
+              <p class="cta-sub">Estimation personnalisée et confidentielle. Réponse sous 48 h.</p>
+              <button class="cta-btn" type="button" id="ctaOpen">
+                Être recontacté
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+
           <button class="reset-btn" type="button" id="resetBtn">↺ Réinitialiser</button>
 
           <p class="disclaimer">Estimation à usage pédagogique — ne constitue pas un avis fiscal. Pour un calcul définitif, consulter un notaire ou l'<a href="https://www.vd.ch" target="_blank" rel="noopener">ACI</a>.</p>
@@ -365,6 +379,53 @@
     <div class="footer-meta">LI Vaud · art. 70, 72 · LMSD art. 10-11 · au 01.01.2026</div>
   </div>
 </footer>
+
+<!-- ====== MODALE CONTACT ====== -->
+<div class="modal-overlay" id="contactModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Fermer">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+
+    <div class="modal-head">
+      <div class="modal-kicker">Estimation de votre bien</div>
+      <h2 id="modalTitle" class="modal-title">Contactez nos équipes</h2>
+      <p class="modal-sub">Laissez vos coordonnées, nous vous recontactons sous 48 h pour une estimation personnalisée.</p>
+    </div>
+
+    <form id="contactForm" class="contact-form" novalidate>
+      <!-- Web3Forms -->
+      <input type="hidden" name="access_key" id="web3formsKey" value="" />
+      <input type="hidden" name="subject" value="Nouvelle demande d'estimation — Calculateur IGI Vaud" />
+      <input type="hidden" name="from_name" value="Calculateur IGI Vaud" />
+      <!-- anti-spam honeypot -->
+      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+      <div class="cf-field">
+        <label for="cfName">Nom <span class="req">*</span></label>
+        <input id="cfName" name="name" type="text" autocomplete="name" required placeholder="Prénom et nom" />
+      </div>
+      <div class="cf-row">
+        <div class="cf-field">
+          <label for="cfEmail">E-mail <span class="req">*</span></label>
+          <input id="cfEmail" name="email" type="email" autocomplete="email" required placeholder="vous@exemple.ch" />
+        </div>
+        <div class="cf-field">
+          <label for="cfPhone">Téléphone</label>
+          <input id="cfPhone" name="phone" type="tel" autocomplete="tel" placeholder="+41 …" />
+        </div>
+      </div>
+      <div class="cf-field">
+        <label for="cfBien">Bien à estimer</label>
+        <textarea id="cfBien" name="bien" rows="3" placeholder="Type de bien, commune, surface, particularités…"></textarea>
+      </div>
+
+      <button type="submit" class="cf-submit" id="cfSubmit">Envoyer ma demande</button>
+      <div class="cf-status" id="cfStatus" role="status" aria-live="polite"></div>
+      <p class="cf-privacy">Vos données ne servent qu'à vous recontacter. Aucune transmission à des tiers.</p>
+    </form>
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>
