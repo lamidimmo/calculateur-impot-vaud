@@ -38,6 +38,18 @@ const FRANCHISE = 5000;
 const FLOOR_YEARS = 24;
 
 /* ============================================================
+   Expert / agence — source unique (alimente la carte CTA,
+   la modale et le récapitulatif PDF). À ajuster une seule fois.
+   ============================================================ */
+const EXPERT = {
+  name: "Kevin Lamidi",
+  role: "Conseiller en vente immobilière",
+  agency: "Lamidimmo",
+  phone: "",   // à compléter
+  email: "",   // à compléter
+};
+
+/* ============================================================
    Web3Forms — clé d'accès pour le formulaire de contact
    → Obtenir gratuitement sur https://web3forms.com (saisir votre
      e-mail, copier la "Access Key"), puis coller ci-dessous.
@@ -321,6 +333,9 @@ function render() {
 
   // Hero timeline — place the user's point on the degressive curve
   updateHeroUserPoint(r.dureePonderee, r.taux);
+
+  // Keep the printable PDF report in sync with the current inputs
+  buildPdfReport(d, r);
 
   saveState();
 }
@@ -848,6 +863,80 @@ function initContactForm() {
 }
 
 /* ============================================================
+   Expert info + récapitulatif PDF
+   ============================================================ */
+function applyExpertInfo() {
+  $$("[data-expert-name]").forEach((el) => { el.textContent = EXPERT.name; });
+  $$("[data-expert-role]").forEach((el) => { el.textContent = EXPERT.role; });
+}
+
+function dateFrToday() {
+  const d = new Date();
+  const p = (n) => String(n).padStart(2, "0");
+  return `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()}`;
+}
+
+function buildPdfReport(d, r) {
+  const el = document.getElementById("pdfReport");
+  if (!el) return;
+  const hasData = r.igi != null;
+  const contactBits = [EXPERT.agency, EXPERT.phone, EXPERT.email].filter(Boolean).join("  ·  ");
+
+  const estim = hasData ? `
+    <table class="pdfr-table">
+      <tr><td>Prix de vente</td><td class="num">${formatMoney(d.prixVente)} CHF</td></tr>
+      <tr><td>(−) Prix d'acquisition retenu</td><td class="num">${formatMoney(r.prixRetenu)} CHF</td></tr>
+      <tr><td>(−) Frais d'acquisition</td><td class="num">${formatMoney(r.totalAcq)} CHF</td></tr>
+      <tr><td>(−) Travaux de plus-value</td><td class="num">${formatMoney(r.totalTravaux)} CHF</td></tr>
+      <tr><td>(−) Frais de vente</td><td class="num">${formatMoney(r.totalVente)} CHF</td></tr>
+      <tr class="total"><td>Gain immobilier brut</td><td class="num">${formatMoney(r.gainBrut)} CHF</td></tr>
+      <tr><td>(−) Franchise légale</td><td class="num">${formatMoney(FRANCHISE)} CHF</td></tr>
+      <tr class="total"><td>Gain imposable net</td><td class="num">${formatMoney(r.gainNet)} CHF</td></tr>
+      <tr><td>Durée fiscale pondérée</td><td class="num">${r.dureePonderee} ans</td></tr>
+      <tr><td>Taux IGI applicable</td><td class="num">${formatPct(r.taux)}</td></tr>
+      <tr class="result"><td>IGI estimé</td><td class="num">${formatMoney(r.igi)} CHF</td></tr>
+    </table>`
+    : `<p class="pdfr-empty">Renseignez le calculateur (prix et dates) pour faire figurer ici votre estimation personnalisée.</p>`;
+
+  el.innerHTML = `<div class="pdfr">
+    <header class="pdfr-head">
+      <div class="pdfr-brand">
+        <div class="pdfr-logo">IGI</div>
+        <div>
+          <div class="pdfr-title">Récapitulatif — Impôt sur le gain immobilier</div>
+          <div class="pdfr-sub">Canton de Vaud · barème au 01.01.2026</div>
+        </div>
+      </div>
+      <div class="pdfr-meta">
+        <div>Établi le ${dateFrToday()}</div>
+        <div class="pdfr-expert">${EXPERT.name}</div>
+        <div>${EXPERT.role}</div>
+      </div>
+    </header>
+
+    <h2>Votre estimation</h2>
+    ${estim}
+
+    <h2>Comment fonctionne l'IGI&nbsp;?</h2>
+    <div class="pdfr-edu">
+      <ul>
+        <li><strong>Taux dégressif :</strong> de 30&nbsp;% (détention &lt; 1 an) à 7&nbsp;% (dès 24 ans). Plus la détention est longue, plus l'impôt baisse (art. 72 LI).</li>
+        <li><strong>Résidence principale :</strong> les années d'occupation principale prouvée comptent double dans la durée fiscale (art. 72 al. 4 LI).</li>
+        <li><strong>Franchise :</strong> un gain inférieur ou égal à 5&nbsp;000 CHF est exonéré (art. 62 let. b LI).</li>
+        <li><strong>Déductible du gain :</strong> frais d'acquisition (droits de mutation 3,3&nbsp;%, notaire et registre foncier), travaux de plus-value (art. 70 LI) et frais de vente.</li>
+        <li><strong>Report d'imposition :</strong> possible en cas de remploi dans une résidence principale en Suisse (art. 65 LI).</li>
+      </ul>
+    </div>
+
+    <footer class="pdfr-foot">
+      <div class="pdfr-cta">Pour une estimation personnalisée et confidentielle de votre bien, contactez ${EXPERT.name}.</div>
+      ${contactBits ? `<div class="pdfr-contact">${contactBits}</div>` : ""}
+      <div class="pdfr-disclaimer">Document d'information à usage pédagogique, sans valeur contractuelle ni fiscale. Estimation indicative selon les règles en vigueur au 01.01.2026 (LI Vaud art. 70 et 72, LMSD art. 10-11). Pour tout calcul définitif, consultez un notaire vaudois ou l'Administration cantonale des impôts (ACI).</div>
+    </footer>
+  </div>`;
+}
+
+/* ============================================================
    Init
    ============================================================ */
 function init() {
@@ -856,8 +945,13 @@ function init() {
   initGuide();
   initTabs();
   initContactForm();
+  applyExpertInfo();
   attachNumericFormatting();
   loadLastVerified();
+
+  // PDF récap (impression / enregistrement navigateur)
+  const pdfBtn = document.getElementById("pdfBtn");
+  if (pdfBtn) pdfBtn.addEventListener("click", () => window.print());
 
   // hero replay button
   const replay = document.getElementById("heroReplay");
