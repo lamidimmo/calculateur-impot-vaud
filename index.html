@@ -13,19 +13,11 @@
 <body>
 
 <header class="site-header">
-  <div class="wrap header-wrap">
-    <div class="brand">
-      <div class="brand-mark" aria-hidden="true">IGI</div>
-      <div class="brand-text">
-        <div class="brand-line-1">Impôt sur le gain immobilier</div>
-        <div class="brand-line-2">Canton de Vaud</div>
-      </div>
-    </div>
-    <div class="header-meta">
-      <span class="badge">Barème au 01.01.2026</span>
-      <span class="badge-check" id="lastVerifiedBadge" title="Vérification automatique mensuelle des sources officielles">
-        <span class="check-dot"></span><span id="lastVerifiedDate">—</span>
-      </span>
+  <!-- Bandeau supérieur — même style que l'estimation foncière -->
+  <div class="topbar">
+    <div class="topbar-inner wrap">
+      <div class="topbar-brand">Impôt sur le gain immobilier</div>
+      <div class="topbar-meta">Canton de Vaud</div>
     </div>
   </div>
 
@@ -40,6 +32,12 @@
       <button class="tab" role="tab" aria-selected="false" data-tab="guide">
         <span class="tab-label">Guide travaux</span>
       </button>
+      <div class="tabs-badges">
+        <span class="badge">Barème au 01.01.2026</span>
+        <span class="badge-check" id="lastVerifiedBadge" title="Vérification automatique mensuelle des sources officielles">
+          <span class="check-dot"></span><span id="lastVerifiedDate">—</span>
+        </span>
+      </div>
     </div>
   </nav>
 </header>
